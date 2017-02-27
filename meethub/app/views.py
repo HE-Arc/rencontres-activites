@@ -7,7 +7,7 @@ from django.views import View
 
 def index(request):
     # just to check if template works
-    return render(request,'activity/create.html')
+    return render(request,'pages/dashboard.html')
 
 
 class Activity(View):
