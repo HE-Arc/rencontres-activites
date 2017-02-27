@@ -12,13 +12,8 @@ from .models import Activity as ActivityModel
 
 
 def index(request):
-    # just to check if template works
-    return render(request, 'activity/create.html')
+    return render(request,'pages/dashboard.html')
 
-
-class Activity(View):
-    def get(self, request):
-        return HttpResponse("GET")
 
 
 class ActivityFormViewCreate(CreateView):
