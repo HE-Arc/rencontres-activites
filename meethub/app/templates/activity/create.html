@@ -2,10 +2,22 @@
 
 {% block title %}Create an activity{% endblock %}
 
+
+
 {% block content %}
+
+    {% load bootstrap4 %}
+
+
     <form method="POST" class="post-form">
         {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="save btn btn-default">Save</button>
+        {{ form.media }}
+        {% bootstrap_form form %}
+        {% buttons %}
+            <button type="submit" class="btn btn-primary">
+                {% bootstrap_icon "star" %} Submit
+            </button>
+        {% endbuttons %}
+
     </form>
 {% endblock %}
