@@ -10,15 +10,9 @@ class ActivityForm(forms.ModelForm):
             'title',
             'description',
             'date_time',
-            'latitude',
-            'longitude',
+            'position',
             'min_participants',
             'max_participants',
             'admin',
             'users'
         )
-
-        widgets = {
-            'latitude' : forms.HiddenInput(),
-            'longitude': forms.HiddenInput()
-        }
