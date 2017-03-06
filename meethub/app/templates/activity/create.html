@@ -2,6 +2,22 @@
 
 {% block title %}Create an activity{% endblock %}
 
+
+
 {% block content %}
-    <h1>Hello world</h1>
+
+    {% load bootstrap4 %}
+
+
+    <form method="POST" class="post-form">
+        {% csrf_token %}
+        {{ form.media }}
+        {% bootstrap_form form %}
+        {% buttons %}
+            <button type="submit" class="btn btn-primary">
+                {% bootstrap_icon "star" %} Submit
+            </button>
+        {% endbuttons %}
+
+    </form>
 {% endblock %}

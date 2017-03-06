@@ -5,7 +5,7 @@ from geoposition.fields import GeopositionField
 class Activity(models.Model):
     title = models.CharField(max_length=200)
     description = models.CharField(max_length=500)
-    position = GeopositionField()
+    position = GeopositionField(null=True)
     date_time = models.DateTimeField()
     min_participants = models.IntegerField()
     max_participants = models.IntegerField()
