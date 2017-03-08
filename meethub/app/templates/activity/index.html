@@ -4,23 +4,50 @@
 
 {% block content %}
 
-    <h1>{{ object.title }}</h1>
-    <h2>{{ object.description }}</h2>
-    <h3>{{ object.date_time }}</h3>
-    <h3>Participants</h3>
-    <ul>
-    {% for participant in object.users.all %}
-        <li>{{ participant.username }}</li>
-    {% endfor %}
-    </ul>
-    <h3>Tags</h3>
-    <ul>
-    {% for tag in object.tags.all %}
-        <li>{{ tag.name }}</li>
-    {% endfor %}
-    </ul>
+    <div class="container">
+        <h1 class="display-2">{{ object.title }}</h1>
+        <p>
+            {{ object.date_time|date:"d.m.Y à h:m" }}
+        </p>
 
-    <div id="map-canvas" style="width:100%;height:300px;"></div>
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="row">
+                        <h2>Description</h2>
+                    </div>
+                    <div class="row">
+                        <p>{{ object.description }}</p>
+                    </div>
+                    <div id="map-canvas" class="row" style="height: 300px;"></div>
+
+                    <div class="row">
+                        <h2>Participants</h2>
+                        <div class="d-flex flex-wrap">
+                        {% for participant in object.users.all %}
+                            <div class="card p-2">
+                                <img class="card-img-top img-thumbnail" src="http://bitsouq.com/images/users/avatar-001.jpg" alt="Card image cap">
+                                <div class="card-block">
+                                    <h4 class="card-title">{{ participant.username }}</h4>
+                                    <!--<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>-->
+                                    <!--<a href="#" class="btn btn-primary">Go somewhere</a>-->
+                                </div>
+                            </div>
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <h2>Discussion</h2>
+                    <div id="disqus_thread"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+
 
     {% include "utils/google_maps.html" %}
     <script>
@@ -44,7 +71,32 @@
         google.maps.event.addDomListener(window, 'load', initialize);
     </script>
 
-    {% load disqus_tags %}
-    {% disqus_show_comments %}
+    <script>
+        /**
+        *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+        *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+        var disqus_config = function () {
+            this.page.remote_auth_s3 = '<message> <hmac> <timestamp>';
+        //    this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+        //    this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        };
+        // This adds the custom login/logout functionality
+            this.sso = {
+                  name:   "SampleNews",
+                  button:  "http://example.com/images/samplenews.gif",
+                  icon:     "http://example.com/favicon.png",
+                  url:        "http://example.com/login/",
+                  logout:  "http://example.com/logout/",
+                  width:   "800",
+                  height:  "400"
+            };
+        (function() { // DON'T EDIT BELOW THIS LINE
+                var d = document, s = d.createElement('script');
+                s.src = 'https://meethub-1.disqus.com/embed.js';
+                s.setAttribute('data-timestamp', + new Date());
+                (d.head || d.body).appendChild(s);
+            })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 
 {% endblock %}
