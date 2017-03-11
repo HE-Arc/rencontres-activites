@@ -21,6 +21,9 @@ class ActivityFormViewCreate(CreateView):
     form_class = ActivityForm
     success_url = '/'
 
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
+
 
 class ActivityFormViewUpdate(UpdateView):
     template_name = 'activity/create.html'
