@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'geoposition',
     'bootstrap4'
+    'django.contrib.sites',
+    'disqus',
 ]
 
 MIDDLEWARE = [
@@ -107,7 +109,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'fr-ch'
 
 TIME_ZONE = 'UTC'
 
@@ -117,8 +119,16 @@ USE_L10N = True
 
 USE_TZ = True
 
+gettext = lambda x: x
+
+LANGUAGES = (
+   ('fr', gettext('French')),
+   ('en', gettext('English')),
+)
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+
+SITE_ID = 1
