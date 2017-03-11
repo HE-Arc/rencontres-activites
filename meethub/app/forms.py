@@ -1,7 +1,7 @@
 from django import forms
 
 from .models import Activity
-
+from .widgets import UserCarouselMultiSelectWidget
 
 class ActivityForm(forms.ModelForm):
     class Meta:
@@ -13,6 +13,16 @@ class ActivityForm(forms.ModelForm):
             'position',
             'min_participants',
             'max_participants',
-            'admin',
-            'users'
+            'users',
+            'admin'
         )
+
+
+        widgets = {
+            "users": UserCarouselMultiSelectWidget()
+        }
+
+
+
+
+
