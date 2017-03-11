@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'geoposition',
+    'bootstrap4'
     'django.contrib.sites',
     'disqus',
 ]
