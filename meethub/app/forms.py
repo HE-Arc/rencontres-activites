@@ -1,7 +1,8 @@
 from django import forms
 
 from .models import Activity
-from .widgets import UserCarouselMultiSelectWidget
+from .widgets import UserCarouselMultiSelectWidget,Html5DateTime
+from django.forms.widgets import DateTimeInput
 
 class ActivityForm(forms.ModelForm):
     class Meta:
@@ -19,7 +20,8 @@ class ActivityForm(forms.ModelForm):
 
 
         widgets = {
-            "users": UserCarouselMultiSelectWidget()
+            "users": UserCarouselMultiSelectWidget(),
+            "date_time": Html5DateTime()
         }
 
 
