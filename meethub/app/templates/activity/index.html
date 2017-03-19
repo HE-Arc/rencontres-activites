@@ -3,32 +3,60 @@
 {% block title %}Activity{% endblock %}
 
 {% block content %}
-
+    {% load l10n %}
     <div class="container">
         <h1 class="display-2">{{ activity.title }}</h1>
-        <p>
-            {{ activity.date_time }}
-        </p>
-
         <div class="container">
+            <div class="row mt-3">{{ activity.description }}</div>
+            <div class="row mt-3">
+                <button type="button" class="btn btn-success">Rejoindre</button>
+            </div>
+        </div>
+        <div class="container mt-5">
             <div class="row">
                 <div class="col">
                     <div class="row">
-                        <h2>Description</h2>
+                        <h2>Informations</h2>
                     </div>
                     <div class="row">
-                        <p>{{ activity.description }}</p>
+                        <div class="card col-sm-6 border-0 rounded-0">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">{{ activity.date_time.date }}</li>
+                                <li class="list-group-item">{{ activity.date_time.time }}</li>
+                                <li class="list-group-item">{{ activity.position }}</li>
+                            </ul>
+                        </div>
+
+                        <div class="card col-sm-6 border-0 rounded-0">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">Participants min : {{ activity.min_participants }}</li>
+                                <li class="list-group-item">Participants max : {{ activity.min_participants }}</li>
+                                <li class="list-group-item">Participants : {{ activity.users.all|length }}</li>
+                            </ul>
+                        </div>
+
+                    </div>
+                    <div class="row card border-0 rounded-0">
+                        <div class="card-block ml-3">
+                            <p>Tags</p>
+                            <div class="d-flex flex-wrap">
+                                {% for tag in activity.tags.all %}
+                                    <span class="badge badge-pill badge-primary mr-2 mb-2">{{ tag.name }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
                     </div>
                     <div id="map-canvas" class="row" style="height: 300px;"></div>
-
-                    <div class="row">
+                    <div class="row mt-5">
                         <h2>Participants</h2>
+                    </div>
+                    <div class="row mb-5">
                         <div class="d-flex flex-wrap">
                         {% for participant in activity.users.all %}
-                            <div class="card p-2">
-                                <img class="card-img-top img-thumbnail" src="http://bitsouq.com/images/users/avatar-001.jpg" alt="Card image cap">
+                            <div class="card p-2 border-0 rounded-0">
+                                <img class="card-img-top img-thumbnail border-0 rounded-0" src="http://bitsouq.com/images/users/avatar-001.jpg" alt="Card image cap">
                                 <div class="card-block">
-                                    <h4 class="card-title">{{ participant.username }}</h4>
+                                    <h4 class="card-title text-center">{{ participant.username }}</h4>
                                     <!--<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>-->
                                     <!--<a href="#" class="btn btn-primary">Go somewhere</a>-->
                                 </div>
@@ -37,14 +65,23 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-4">
+                <div class="col-5 ml-2">
                     <h2>Discussion</h2>
+                    <div class="card border-0 rounded-0">
+                    <div class="card-block">
                     {% load disqus_tags %}
+                    {% set_disqus_identifier "wh_" content.get_content_id %}
+                    {% set_disqus_title content.get_safe_title %}
                     {% disqus_show_comments %}
+                    {% if request.user.is_authenticated %}
+                        {% disqus_sso %}
+                    {% endif %}
+                    </div>
+                    </div>
+
                 </div>
             </div>
         </div>
-
     </div>
 
     {% include "utils/google_maps.html" %}
@@ -63,7 +100,7 @@
                 });
                 bounds.extend(position);
             }
-            addMarker({{ activity.position.latitude}}, {{ activity.position.longitude}}, "{{ object.title }}");
+            addMarker({{ activity.position.latitude|unlocalize }}, {{ activity.position.longitude|unlocalize }}, "{{ activity.title }}");
             map.fitBounds(bounds);
         }
         google.maps.event.addDomListener(window, 'load', initialize);
