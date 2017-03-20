@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'geoposition',
     'bootstrap4',
     'django.contrib.sites',
+    'django.contrib.gis',
     'disqus',
 ]
 
@@ -80,7 +81,7 @@ WSGI_APPLICATION = 'meethub.wsgi.application'
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': 'meethub',
         'USER': 'postgres',
         'PASSWORD': '1234',
