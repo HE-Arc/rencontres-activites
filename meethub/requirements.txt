@@ -1,0 +1,12 @@
+appdirs==1.4.0
+disqus==0.0.4
+Django==1.10.5
+django-disqus==0.5
+django-geoposition==0.3.0
+django-map-widgets==0.1.8
+mock==2.0.0
+packaging==16.8
+pbr==2.0.0
+psycopg2==2.7.1
+pyparsing==2.1.10
+six==1.10.0
