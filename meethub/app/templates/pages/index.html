@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<h1>Page d'accueil</h1>
+<a href="{% url 'registration_register' %}" type="button" class="btn btn-primary">Sign up</a>
+<a href="{% url 'login' %}" type="button" class="btn btn-secondary">Log in</a>
+{% endblock %}
