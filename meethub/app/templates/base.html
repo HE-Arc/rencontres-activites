@@ -14,8 +14,31 @@
   </style>
   </head>
   <body style="background:#f5f8fa;">
+    <nav class="navbar navbar-toggleable-md navbar-inverse bg-primary">
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <a class="navbar-brand" href="#">Meethub</a>
 
-    <div id="content">
+        <div class="collapse navbar-collapse" id="navbarColor02">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Matchmaking</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Profil</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'activity-add' %}">Créer une activité</a>
+            </li>
+          </ul>
+        </div>
+    </nav>
+
+    <div id="content" style="margin-top:10px;">
         {% block content %}{% endblock %}
     </div>
 

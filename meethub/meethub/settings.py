@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'geoposition',
+    'bootstrap4',
     'django.contrib.sites',
     'disqus',
 ]
@@ -123,3 +124,9 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+
+SITE_ID = 1
+
+ACCOUNT_ACTIVATION_DAYS = 7
+
+LOGIN_REDIRECT_URL='dashboard'
