@@ -1,7 +1,10 @@
 from django import forms
+from django.contrib.gis import forms as gis_form
+from mapwidgets.widgets import GooglePointFieldWidget
 
 from .models import Activity
-
+from .widgets import UserCarouselMultiSelectWidget,Html5DateTime
+from django.forms.widgets import DateTimeInput
 
 class ActivityForm(forms.ModelForm):
     class Meta:
@@ -13,6 +16,17 @@ class ActivityForm(forms.ModelForm):
             'position',
             'min_participants',
             'max_participants',
-            'admin',
-            'users'
+            'users',
+            'admin'
         )
+
+
+        widgets = {
+            "users": UserCarouselMultiSelectWidget(),
+            "position": GooglePointFieldWidget
+        }
+
+
+
+
+

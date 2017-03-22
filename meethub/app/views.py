@@ -43,3 +43,4 @@ class ActivityFormViewUpdate(UpdateView):
 class ActivityDetailView(generic.DetailView):
     model = Activity
     template_name = 'activity/index.html'
+    context_object_name = 'activity'
