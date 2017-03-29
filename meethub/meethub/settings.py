@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.gis',
     'disqus',
     'mapwidgets',
+    'bootstrap3_datetime'
 ]
 
 MIDDLEWARE = [
