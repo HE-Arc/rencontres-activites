@@ -1,18 +1,24 @@
+from bootstrap3_datetime.widgets import DateTimePicker
 from django import forms
 from django.contrib.gis import forms as gis_form
 from mapwidgets.widgets import GooglePointFieldWidget
 
 from .models import Activity
-from .widgets import UserCarouselMultiSelectWidget,Html5DateTime
-from django.forms.widgets import DateTimeInput
+from .widgets import UserCarouselMultiSelectWidget, Html5Date, Html5Time
+
 
 class ActivityForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(ActivityForm, self).__init__(*args, **kwargs)
+        self.fields['users'].required = False
+
     class Meta:
         model = Activity
         fields = (
             'title',
             'description',
-            'date_time',
+            'date',
+            'time',
             'position',
             'min_participants',
             'max_participants',
@@ -20,13 +26,9 @@ class ActivityForm(forms.ModelForm):
             'admin'
         )
 
-
         widgets = {
             "users": UserCarouselMultiSelectWidget(),
-            "position": GooglePointFieldWidget
+            "position": GooglePointFieldWidget,
+            'date': Html5Date,
+            "time": Html5Time
         }
-
-
-
-
-
