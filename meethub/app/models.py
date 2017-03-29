@@ -1,7 +1,5 @@
 from django.contrib.auth.models import User
 from django.db import models
-from django.db.models.functions import datetime
-from geoposition.fields import GeopositionField
 from django.contrib.gis.db import models as gmodels
 
 
@@ -18,6 +16,18 @@ class Activity(models.Model):
     users = models.ManyToManyField(User, related_name="participants")
 
 
+    @staticmethod
+    def get_recommend_users_for(user_to_recommend_friends):
+        """
+        Returns a list of last seen users or friends
+        :param user_to_recommend_friends: the user who receives the recommandation of friends
+        :return: a collection of users
+        """
+
+        # TODO: return some friends and last seen users
+        return User.objects.all()
+
+
 class Tag(models.Model):
     name = models.CharField(max_length=10)
 
@@ -25,3 +35,4 @@ class Tag(models.Model):
 class WaitingUser(models.Model):
     users = models.ManyToManyField(User)
     tag = models.ForeignKey('Tag')
+

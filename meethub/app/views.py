@@ -34,6 +34,10 @@ class ActivityFormViewCreate(CreateView):
     form_class = ActivityForm
     success_url = '/'
 
+    def form_valid(self, form):
+        form.instance.admin = self.request.user
+        return super(ActivityFormViewCreate, self).form_valid(form)
+
 class ActivityFormViewUpdate(UpdateView):
     template_name = 'activity/create.html'
     form_class = ActivityForm
