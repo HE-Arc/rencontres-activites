@@ -5,6 +5,7 @@ from django.db import models
 from django.contrib.gis.db import models as gmodels
 from django.contrib.gis.geos import Point
 
+
 class Activity(models.Model):
     title = models.CharField(max_length=200)
     description = models.CharField(max_length=500)
@@ -19,8 +20,11 @@ class Activity(models.Model):
 
     @staticmethod
     def get_activities_near(lat, long):
-        location = GEOSGeometry('POINT(%s %s)' % (lat,long), srid=4326)
+        location = GEOSGeometry('POINT(%s %s)' % (lat, long), srid=4326)
         return Activity.objects.filter(position__distance_lte=(location, D(m=5)))
+
+    def __str__(self):
+        return self.title
 
     @staticmethod
     def get_waiting_users(user_to_recommend_friends):
@@ -44,4 +48,3 @@ class Tag(models.Model):
 class WaitingUser(models.Model):
     users = models.ManyToManyField(User)
     tag = models.ForeignKey('Tag')
-

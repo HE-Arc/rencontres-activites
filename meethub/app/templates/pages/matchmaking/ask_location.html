@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Matchmaking, give your location{% endblock %}
+
+{% block content %} 
+    <div class="container-fluid">
+        <div class="row">
+            <div class="alert alert-info" role="alert">
+              <h4 class="alert-heading">Almost there !</h4>
+              <p>We just need your current location ! Allow the browser to give it to us and we will provide you some events !</p>
+            </div>
+        </div>
+
+    <script>
+
+        getLocation();
+
+        function getLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(pos){
+                    window.location = "/matchmaking/" + pos.coords.latitude + "/" + pos.coords.longitude;
+                });
+            } else {
+                alert("Please ! Let us use your gps");
+            }
+        }
+    </script>
+
+    </div>
+
+{% endblock %}

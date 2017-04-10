@@ -2,18 +2,20 @@
 
 {% block title %}Dashboard{% endblock %}
 
-{% block content %} 
+{% block content %}
+{% load l10n %}
     <div class="container">
-      <h1>Hello {{request.user.username}}</h1>
+      <h1></h1>
     <div class="row" id="dashboard-top">
         <div class="col-4">
             <div class="row white_row">
                 <!-- Profil -->
+                <h6 style="background: #34495e;color:white;padding:10px;text-align:center;width:100%;font-weight:400;">Profil</h6>
                 <div class="col-12" style="text-align: center">
-                    <img src="http://lorempicsum.com/rio/150/150/5"alt="..." class="rounded-circle">
+                    <img src="https://infinit8.io/wp-content/uploads/2016/10/Bryan700x700-1.png" alt="..." style="max-width:170px" class="rounded-circle">
                 </div>
                 <div class="col-10 offset-1" style="text-align:center;padding:10px;">
-                    <span id="profil-username" style="font-size:16px;font-weight: bold;">Username</span>
+                    <span id="profil-username" style="font-size:16px;font-weight: bold;">{{ request.user.username }}</span>
                 </div>
                 <div class="col-12" style="text-align: justify;">
                     <p style="font-size:14px;">
@@ -25,52 +27,39 @@
             </div>
             <div class="row white_row">
                 <!-- Activités terminées -->
-                <h4>Activités terminées</h4>
-                <div class="col-12">
-                    <p>Vos différentes activités passées.</p>
-                </div>
-
+                <h6 style="background: #34495e;color:white;padding:10px;text-align:center;width:100%;font-weight:400;">Activités terminées</h6>
                 <div class="list-group" style="width:100%">
-                  <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-                    <div class="d-flex w-100 justify-content-between">
-                      <h5 class="mb-1">List group item heading</h5>
-                      <small>3 days ago</small>
-                    </div>
-                    <small>Donec id elit non mi porta.</small>
-                  </a>
-                  <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-                    <div class="d-flex w-100 justify-content-between">
-                      <h5 class="mb-1">List group item heading</h5>
-                      <small class="text-muted">3 days ago</small>
-                    </div>
-                    <small class="text-muted">Donec id elit non mi porta.</small>
-                  </a>
-                  <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-                    <div class="d-flex w-100 justify-content-between">
-                      <h5 class="mb-1">List group item heading</h5>
-                      <small class="text-muted">3 days ago</small>
-                    </div>
-                    <small class="text-muted">Donec id elit non mi porta.</small>
-                  </a>
-                </div>
 
+                  {% for activity in activities_done %}
+
+                  <a href="{% url 'activity' pk=activity.id %}" class="list-group-item list-group-item-action flex-column align-items-start border-0">
+                    <div class="d-flex w-100 justify-content-between">
+                      <h5 class="mb-1">{{ activity.title }}</h5>
+                      <small>{{ activity.date }}</small>
+                    </div>
+                    <small>{{ activity.description }}</small>
+                  </a>
+
+                  {% endfor %}
+                </div>
             </div>
         </div>
         <div class="col-8" style="padding-left:50px;">
             <div class="row white_row">
                 <!-- Prochaines activités -->
-                <h4>Prochaines activités</h4>
+                <h6 style="background: #34495e;color:white;padding:10px;text-align:center;width:100%;font-weight:400;">Vos prochaines activités</h6>
                 <div class="col-12">
-                    <p>Vos différentes activités de prévues</p>
-                </div>
-                <div class="col-12">
-                    {% for foo in "xxx" %}
-                        <div class="card mb-3">
-                          <img class="card-img-top" src="http://lorempicsum.com/rio/770/180/1" alt="Card image cap">
+                    {% for activity in next_activities %}
+                        <div class="card mb-3 border-0">
+                          <img  class="card-img-top" src="https://maps.googleapis.com/maps/api/staticmap?center={{ activity.position.y|unlocalize }},{{ activity.position.x|unlocalize }}
+                                                          &zoom=13&size=600x200&maptype=roadmap
+                                                          &markers=color:blue%7Clabel:{{activity.title}}%7C{{ activity.position.y|unlocalize }}, {{ activity.position.x|unlocalize }}
+                                                          &key=AIzaSyC7h7I1_X4CyNylo7LEbjRub0SZP5ruLlU"/>
                           <div class="card-block">
-                            <h4 class="card-title">Card title</h4>
-                            <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
-                            <p class="card-text"><small class="text-muted">Last updated 3 mins ago</small></p>
+                            <h4 class="card-title">{{ activity.title }}</h4>
+                            <p class="card-text">{{ activity.description }}</p>
+                            <p class="card-text"><small class="text-muted">{{ activity.date }}</small></p>
+                            <a href="{% url 'activity' pk=activity.id %}" class="btn btn-sm btn-primary" style="float:right;">En savoir plus</a>
                           </div>
                         </div>
                     {% endfor %}
@@ -85,53 +74,30 @@
     </div>
     <div class="container">
     <hr/>
-    <h3>Les activités près de chez vous !</h3>
-    <div class="row" id="dashboard-bottom" style="max-height:500px;">
-        <div class="col-4" style="padding:1px;overflow-y:scroll;">
+    <div class="row" id="dashboard-bottom" style="max-height:500px;margin-bottom:20px;">
+        <div class="col-4" style="padding:1px;overflow-y:scroll;background:white;">
+          <h6 style="background: #34495e;color:white;padding:10px;text-align:center;font-weight:400;">Près de chez vous !</h6>
             <div id="accordion" role="tablist" aria-multiselectable="true">
-              <div class="card">
-                <div class="card-header" role="tab" id="headingOne">
-                  <h5 class="mb-0">
-                    <a data-toggle="collapse" class="collapsed" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                      Collapsible Group Item #1
+              {% for activity in upcoming_activities %}
+              <div class="card" style="background:white;border:0px; border-radius:0px;">
+                <div class="card-header" role="tab" id="heading{{activity.id}}" style="background:white;border:0px;border-radius:0px;border-bottom:1px solid #eee;">
+                  <h6 class="mb-0">
+                    <a data-toggle="collapse" class="collapsed" data-parent="#accordion" href="#collapse{{activity.id}}" aria-expanded="false" aria-controls="collapse{{activity.id}}" style="display:block;">
+                      {{ activity.title }}
                     </a>
-                  </h5>
+                  </h6>
                 </div>
 
-                <div id="collapseOne" class="collapse" role="tabpanel" aria-labelledby="headingOne">
+                <div id="collapse{{ activity.id }}" class="collapse" role="tabpanel" aria-labelledby="heading{{ activity.id }}">
                   <div class="card-block">
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+                    <p>
+                    {{ activity.description }}
+                    </p>
+                    <a href="{% url 'activity' pk=activity.id %}" class="btn btn-sm btn-primary" style="float:right;margin-bottom:10px;">En savoir plus</a>
                   </div>
                 </div>
               </div>
-              <div class="card">
-                <div class="card-header" role="tab" id="headingTwo">
-                  <h5 class="mb-0">
-                    <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                      Collapsible Group Item #2
-                    </a>
-                  </h5>
-                </div>
-                <div id="collapseTwo" class="collapse" role="tabpanel" aria-labelledby="headingTwo">
-                  <div class="card-block">
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                  </div>
-                </div>
-              </div>
-              <div class="card">
-                <div class="card-header" role="tab" id="headingThree">
-                  <h5 class="mb-0">
-                    <a class="collapsed" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                      Collapsible Group Item #3
-                    </a>
-                  </h5>
-                </div>
-                <div id="collapseThree" class="collapse" role="tabpanel" aria-labelledby="headingThree">
-                  <div class="card-block">
-                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
-                  </div>
-                </div>
-              </div>
+              {% endfor %}
             </div>
         </div>
         <div class="col-8" style="padding:0px;">
@@ -142,6 +108,7 @@
 
     {% include "utils/google_maps.html" %}
 <script>
+
 function initialize() {
   var map = new google.maps.Map(document.getElementById('map-canvas'));
   var bounds = new google.maps.LatLngBounds();
@@ -156,7 +123,10 @@ function initialize() {
     });
     bounds.extend(position);
   }
-  addMarker(40, 48, "Test", "1");
+  {% for activity in upcoming_activities %}
+    addMarker({{ activity.position.y|unlocalize }},{{ activity.position.x|unlocalize }}, "{{ activity.title }}", "{{ activity.title }}");
+  {% endfor %}
+
   map.fitBounds(bounds);
 }
 google.maps.event.addDomListener(window, 'load', initialize);
