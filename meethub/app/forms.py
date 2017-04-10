@@ -32,5 +32,3 @@ class ActivityForm(forms.ModelForm):
             'date': Html5Date,
             "time": Html5Time
         }
-
-
