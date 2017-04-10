@@ -13,13 +13,14 @@ from django.views.generic import UpdateView
 from pygeocoder import Geocoder
 
 from .forms import ActivityForm
-from .models import Activity
+from .models import Activity, get_activities_near, get_waiting_users
 from .models import Activity as ActivityModel
 from secret import *
 
 
 def index(request):
     return render(request, 'pages/index.html')
+
 
 @login_required
 def dashboard(request):
@@ -37,7 +38,7 @@ def dashboard(request):
     upcoming_activities = Activity.objects.filter(date__gte=today).order_by('date')[:10]
 
     # Give the informations to the view
-    context['activities_done'] =  activities_done_by_the_user
+    context['activities_done'] = activities_done_by_the_user
     context['next_activities'] = next_activities_of_the_user
     context['upcoming_activities'] = upcoming_activities
 
@@ -56,11 +57,11 @@ def matchmaking(request, lat=None, long=None):
     :return:
     """
     if lat and long:
-        activities = Activity.get_activities_near(lat, long)
+        # TODO: check where there's still place && add user to waiting list
+        activities = get_activities_near(lat, long).filter(date__gte=datetime.now().date())
         return render(request, 'pages/matchmaking/index.html', {"activities": activities})
     else:
         return render(request, 'pages/matchmaking/ask_location.html', {})
-
 
 
 class ActivityFormViewCreate(LoginRequiredMixin, CreateView):
@@ -70,7 +71,7 @@ class ActivityFormViewCreate(LoginRequiredMixin, CreateView):
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
-        form.fields['users'].queryset = Activity.get_waiting_users(self.request.user)
+        form.fields['users'].queryset = get_waiting_users(self.request.user)
         return form
 
     def form_valid(self, form):
@@ -98,7 +99,8 @@ class ActivityDetailView(LoginRequiredMixin, generic.DetailView):
         context['user'] = self.request.user
         # Authentication params for Disqus
         # /!\ django-disqus authentication params not works - bad signature /!\
-        message_dict = {'id': self.request.user.id, 'username': self.request.user.username, 'email': self.request.user.email}
+        message_dict = {'id': self.request.user.id, 'username': self.request.user.username,
+                        'email': self.request.user.email}
         message = base64.b64encode(bytes(json.dumps(message_dict), 'utf-8'))
         d = datetime.utcnow()
         timestamp = calendar.timegm(d.utctimetuple())

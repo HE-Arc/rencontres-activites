@@ -3,5 +3,9 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-<h1>Bonjour</h1>
+
+
+    {% for activity in activities %}
+        {{  activity }}
+    {%  endfor %}
 {% endblock %}
