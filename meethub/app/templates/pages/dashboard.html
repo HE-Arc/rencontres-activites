@@ -35,7 +35,7 @@
                   <a href="{% url 'activity' pk=activity.id %}" class="list-group-item list-group-item-action flex-column align-items-start border-0">
                     <div class="d-flex w-100 justify-content-between">
                       <h5 class="mb-1">{{ activity.title }}</h5>
-                      <small>{{ activity.date_time }}</small>
+                      <small>{{ activity.date }}</small>
                     </div>
                     <small>{{ activity.description }}</small>
                   </a>
@@ -58,7 +58,7 @@
                           <div class="card-block">
                             <h4 class="card-title">{{ activity.title }}</h4>
                             <p class="card-text">{{ activity.description }}</p>
-                            <p class="card-text"><small class="text-muted">{{ activity.date_time }}</small></p>
+                            <p class="card-text"><small class="text-muted">{{ activity.date }}</small></p>
                             <a href="{% url 'activity' pk=activity.id %}" class="btn btn-sm btn-primary" style="float:right;">En savoir plus</a>
                           </div>
                         </div>

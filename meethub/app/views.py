@@ -28,11 +28,11 @@ def dashboard(request):
     # Get the informations of the logged user
 
     # Get the three latest activities done by the user
-    activities_done_by_the_user = u.participants.filter(date_time__lte=today).order_by('-date_time')[:3];
+    activities_done_by_the_user = u.participants.filter(date__lte=today).order_by('-date')[:3];
     # Get the three next activities of the user
-    next_activities_of_the_user = u.participants.filter(date_time__gte=today).order_by('date_time')[:3]
+    next_activities_of_the_user = u.participants.filter(date__gte=today).order_by('date')[:3]
     # Get the first 10 upcoming activities.
-    upcoming_activities = Activity.objects.filter(date_time__gte=today).order_by('date_time')[:10]
+    upcoming_activities = Activity.objects.filter(date__gte=today).order_by('date')[:10]
 
     # Give the informations to the view
     context['activities_done'] =  activities_done_by_the_user;
@@ -47,6 +47,10 @@ class ActivityFormViewCreate(LoginRequiredMixin, CreateView):
     template_name = 'activity/create.html'
     form_class = ActivityForm
     success_url = '/'
+
+    def form_valid(self, form):
+        form.instance.admin = self.request.user
+        return super(ActivityFormViewCreate, self).form_valid(form)
 
 class ActivityFormViewUpdate(LoginRequiredMixin, UpdateView):
     template_name = 'activity/create.html'
