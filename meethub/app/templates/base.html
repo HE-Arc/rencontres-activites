@@ -25,9 +25,17 @@
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
-        <a class="navbar-brand" href="#">Meethub</a>
+        <a class="navbar-brand" href="/">Meethub</a>
         <div class="collapse navbar-collapse" id="navbarColor02">
           <ul class="navbar-nav mr-auto">
+            {% if not user.is_authenticated %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'registration_register' %}">Inscription</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'login' %}">Connexion</a>
+            </li>
+            {% else %}
             <li class="nav-item">
               <a class="nav-link" href="{% url 'dashboard' %}">Dashboard</a>
             </li>
@@ -40,12 +48,13 @@
             <li class="nav-item">
               <a class="nav-link" href="{% url 'activity-add' %}">Créer une activité</a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'logout' %}" style="color:#c0392b;">Déconnexion</a>
+            </li>
+            {% endif %}
           </ul>
         </div>
     </nav>
-    <div id="content" class="container" style="margin-top:20px;">
-        {% block content %}{% endblock %}
-    </div>
-
+    {% block content %}{% endblock %}
   </body>
 </html>
