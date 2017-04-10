@@ -1,9 +1,29 @@
 {% extends 'base.html' %}
+{% load appfilters %}
 
 {% block content %}
-<form method="post">
-  {% csrf_token %}
-  {{form.as_p}}
-  <button type="submit">Sign up</button>
-</form>
+
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col col-md-5 card mt-5">
+      <div class="card-block">
+        <h2>Inscription</h2>
+        <form method="post">
+          {{ form.non_field_errors }}
+          {% csrf_token %}
+          <label>Pseudo</label>
+          {{form.username|addclass:"form-control"}}
+          <label>Email</label>
+          {{form.email|addclass:"form-control"}}
+          <label>Mot de passe</label>
+          {{form.password1|addclass:"form-control"}}
+          <label>Confirmer le mot de passe</label>
+          {{form.password2|addclass:"form-control"}}
+          <button type="submit" class="btn btn-primary my-2">Confirmer</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %}

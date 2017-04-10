@@ -5,9 +5,6 @@
         <img class="img-fluid img-thumbnail"   src="https://blogs-images.forbes.com/hughmcintyre/files/2015/02/Scarlett.jpg" alt="Card image cap">
             <div class="card-block">
                 <h5 class="card-title">{{ user.1 }}</h5>
-
-            <a href="#" class="card-link">Invite</a>
-
             <input type="checkbox" name="users" id="id_users_{{ forloop.counter0 }}" value="{{ user.0 }}" {% if user.0 in selected_ids %} checked {% endif %} />Inviter ?<br />
             </div>
         </div>
