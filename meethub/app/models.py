@@ -1,7 +1,9 @@
 from django.contrib.auth.models import User
+from django.contrib.gis.geos import GEOSGeometry
+from django.contrib.gis.measure import D
 from django.db import models
 from django.contrib.gis.db import models as gmodels
-
+from django.contrib.gis.geos import Point
 
 class Activity(models.Model):
     title = models.CharField(max_length=200)
@@ -15,11 +17,15 @@ class Activity(models.Model):
     tags = models.ManyToManyField('Tag')
     users = models.ManyToManyField(User, related_name="participants")
 
+    @staticmethod
+    def get_activities_near(lat, long):
+        location = GEOSGeometry('POINT(%s %s)' % (lat,long), srid=4326)
+        return Activity.objects.filter(position__distance_lte=(location, D(m=5)))
 
     @staticmethod
-    def get_recommend_users_for(user_to_recommend_friends):
+    def get_waiting_users(user_to_recommend_friends):
         """
-        Returns a list of last seen users or friends
+        Returns a list of waiting users who arent near the event
         :param user_to_recommend_friends: the user who receives the recommandation of friends
         :return: a collection of users
         """
@@ -30,6 +36,9 @@ class Activity(models.Model):
 
 class Tag(models.Model):
     name = models.CharField(max_length=10)
+
+    def __str__(self):
+        return str(self.name)
 
 
 class WaitingUser(models.Model):
