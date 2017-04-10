@@ -1,31 +1,21 @@
-from django.core import serializers
-from django.forms import forms
-from django.shortcuts import render
-from django.views.generic import CreateView
-from django.views.generic import UpdateView
-from django.views import View, generic
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
-
-from django.http import HttpResponseRedirect, HttpRequest
-
 import base64
+import calendar
 import hmac
 import json
-import calendar
-import time
+from datetime import datetime
 
-from .secret import *
-
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import render
+from django.views import generic
+from django.views.generic import CreateView
+from django.views.generic import UpdateView
 from pygeocoder import Geocoder
 
-from .models import Activity as ActivityModel
-from .models import Activity
-
-from datetime import datetime, time
-
 from .forms import ActivityForm
-
+from .models import Activity
+from .models import Activity as ActivityModel
+from secret import *
 
 
 def index(request):
@@ -53,22 +43,47 @@ def dashboard(request):
 
     context['api_key_map'] = "AIzaSyD48NmCV_kXSHmaGQSdEGojD7vkcRcNqME"
 
+    activities = Activity.objects.all()
+    context['activities'] = activities
     return render(request, 'pages/dashboard.html', context)
+
+
+@login_required
+def matchmaking(request, lat=None, long=None):
+    """
+    Get events near user if lat and long not none, otherwise request location
+    :param request:
+    :return:
+    """
+    if lat and long:
+        activities = Activity.get_activities_near(lat, long)
+        return render(request, 'pages/matchmaking/index.html', {"activities": activities})
+    else:
+        return render(request, 'pages/matchmaking/ask_location.html', {})
+
+
 
 class ActivityFormViewCreate(LoginRequiredMixin, CreateView):
     template_name = 'activity/create.html'
     form_class = ActivityForm
     success_url = '/'
 
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields['users'].queryset = Activity.get_waiting_users(self.request.user)
+        return form
+
     def form_valid(self, form):
         form.instance.admin = self.request.user
         return super(ActivityFormViewCreate, self).form_valid(form)
+
 
 class ActivityFormViewUpdate(LoginRequiredMixin, UpdateView):
     template_name = 'activity/create.html'
     form_class = ActivityForm
     success_url = '/'
     model = ActivityModel
+
 
 class ActivityDetailView(LoginRequiredMixin, generic.DetailView):
     model = Activity
