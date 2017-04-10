@@ -34,7 +34,12 @@ from .forms import ActivityForm
 from .models import Activity, get_activities_near, get_waiting_users
 from .models import Activity as ActivityModel
 from .secret import *
+from pygeocoder import Geocoder
 
+from .forms import ActivityForm
+from .models import Activity, get_activities_near, get_waiting_users
+from .models import Activity as ActivityModel
+from .secret import *
 
 def index(request):
     return render(request, 'pages/index.html')
@@ -106,7 +111,7 @@ class ActivityFormViewUpdate(LoginRequiredMixin, UpdateView):
 
 class ActivityDetailView(LoginRequiredMixin, generic.DetailView):
     model = Activity
-    template_name = 'activity/index.html'
+    template_name = 'activity/view.html'
 
     def get_context_data(self, **kwargs):
         context = super(ActivityDetailView, self).get_context_data(**kwargs)

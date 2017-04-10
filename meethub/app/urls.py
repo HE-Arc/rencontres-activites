@@ -3,6 +3,8 @@ from django.conf.urls import url, include
 from .views import ActivityFormViewCreate, ActivityFormViewUpdate, dashboard, UserProfileDetailView
 from . import views
 from app.views import *
+from app.views import *
+
 from django.contrib.auth import views as auth_views
 
 

@@ -2,6 +2,7 @@ from django import forms
 from mapwidgets.widgets import GooglePointFieldWidget
 
 from .models import Activity,User, UserProfile
+from .models import Activity
 from .widgets import UserCarouselMultiSelectWidget, Html5Date, Html5Time
 
 
