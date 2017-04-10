@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+
+
+    {% for activity in activities %}
+        {{  activity }}
+    {%  endfor %}
+{% endblock %}

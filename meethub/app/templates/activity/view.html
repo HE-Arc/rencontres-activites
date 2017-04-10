@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Activity{% endblock %}
+
+{% block content %}
+    {% load l10n %}
+    <div class="container">
+        <h1 class="pt-5">{{activity.title }}</h1>
+        <div class="container mt-0">
+            <div class="row mt-3">{{ activity.description }}</div>
+        </div>
+        <div class="container mt-5">
+            <div class="row">
+                <div class="col">
+                    <div class="row">
+                        <h6 style="background: #34495e;color:white;padding:10px;text-align:center;width:100%;font-weight:400;" class="mb-0">Informations</h6>
+                    </div>
+                    <div class="row mt-0">
+                        <div class="card col-sm-12 border-top-0 border-bottom-0 rounded-0">
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item">{{ activity.date }}</li>
+                                        <li class="list-group-item">{{ activity.time }}</li>
+                                        <li class="list-group-item">{{ coords.street_address|default_if_none:"-"  }}
+                                                                    ,{{ coords.city|default_if_none:"-"  }}
+                                                                    , {{ coords.country|default_if_none:"-" }}
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div class="col-sm-6">
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item">Participants min : {{ activity.min_participants }}</li>
+                                        <li class="list-group-item">Participants max : {{ activity.max_participants }}</li>
+                                        <li class="list-group-item">Participants actuels : {{ activity.users.all|length }}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="row card border-top-0 border-bottom-0 rounded-0">
+                        <div class="card-block ml-3">
+                            <p>Tags</p>
+                            <div class="d-flex flex-wrap">
+                                {% for tag in activity.tags.all %}
+                                    <span class="badge badge-pill badge-primary mr-2 mb-2">{{ tag.name }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                    <div id="map-canvas" class="row" style="height: 300px;"></div>
+                    <div class="row mt-5">
+                        <h6 style="background: #34495e;color:white;padding:10px;text-align:center;width:100%;font-weight:400;" class="mb-0">Participants</h6>
+                    </div>
+                    <div class="card row mb-5 mt-0 border-top-0 p-2 rounded-0">
+                        <div class="d-flex flex-wrap">
+                        {% for participant in activity.users.all %}
+                            <div class="card p-2 rounded-0 mr-2">
+                                <img class="card-img-top img-thumbnail border-0 rounded-0" src="http://bitsouq.com/images/users/avatar-001.jpg" alt="Card image cap">
+                                <div class="card-block">
+                                    <h4 class="card-title text-center">{{ participant.username }}</h4>
+                                    <!--<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>-->
+                                    <!--<a href="#" class="btn btn-primary">Go somewhere</a>-->
+                                </div>
+                            </div>
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-5 ml-2">
+                    <h6 style="background: #34495e;color:white;padding:10px;text-align:center;width:100%;font-weight:400;" class="mb-0">Discussion</h6>
+                    <div class="card border-top-0 rounded-0 mt-0">
+                        <div class="card-block">
+                            {% load disqus_tags %}
+                            {% set_disqus_identifier "activity" %}
+                            {% set_disqus_title activity.title %}
+                                <script>
+                                    var disqus_config = function() {
+                                        this.page.remote_auth_s3 = "{{ disqus_auth }}";
+                                        this.page.api_key = "52feWIkZMvNio7AVhezz8T28J552MHkeZL7w1YS6PtjWxRUbKkAADWGB70KXT1NC";
+                                    }
+                                </script>
+                            {% disqus_show_comments %}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% include "utils/google_maps.html" %}
+    <script>
+        function initialize() {
+            var map = new google.maps.Map(document.getElementById('map-canvas'));
+            var bounds = new google.maps.LatLngBounds();
+            function addMarker(lat, lng, title, lab) {
+                var position = new google.maps.LatLng(lat, lng);
+                var marker = new google.maps.Marker({
+                  position: position,
+                  map: map,
+                  clickable: true,
+                  title: title,
+                  label: lab
+                });
+                bounds.extend(position);
+            }
+            addMarker({{ activity.position.y|unlocalize }}, {{ activity.position.x|unlocalize }}, "{{ coords.street_address|default_if_none:"-"  }}, {{ coords.city|default_if_none:"-"  }}, {{ coords.country|default_if_none:"-" }}");
+            map.fitBounds(bounds);
+        }
+        google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+{% endblock %}

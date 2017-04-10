@@ -1,8 +1,31 @@
 from django.contrib.auth.models import User
+from django.contrib.gis.db.models.functions import Distance
+from django.contrib.gis.measure import D
 from django.db import models
 from django.contrib.gis.db import models as gmodels
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.contrib.gis.geos import Point
+
+
+def get_activities_near(lat, long):
+    location = Point(float(long), float(lat))
+    return Activity.objects \
+        .filter(position__distance_lte=(location, D(km=10))) \
+        .annotate(distance=Distance('position', location)) \
+        .order_by('distance')
+
+
+def get_waiting_users(user_to_recommend):
+    """
+    Returns a list of waiting users who arent near the event
+    :param user_to_recommend_friends: the user who receives the recommandation of friends
+    :return: a collection of users
+    """
+
+    # TODO: return some friends and last seen users
+    return User.objects.all()
+
 
 class Activity(models.Model):
     title = models.CharField(max_length=200)
@@ -20,23 +43,12 @@ class Activity(models.Model):
         return self.title
 
 
-    @staticmethod
-    def get_recommend_users_for(user_to_recommend_friends):
-        """
-        Returns a list of last seen users or friends
-        :param user_to_recommend_friends: the user who receives the recommandation of friends
-        :return: a collection of users
-        """
-
-        # TODO: return some friends and last seen users
-        return User.objects.all()
-
-
 class Tag(models.Model):
     name = models.CharField(max_length=10)
 
     def __str__(self):
-        return self.name
+        return str(self.name)
+
 
 class WaitingUser(models.Model):
     users = models.ManyToManyField(User)
