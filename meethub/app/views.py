@@ -4,44 +4,25 @@ import hmac
 import json
 from datetime import datetime
 
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.db.models import Count
-from django.db.models import F
-from django.shortcuts import render
-from django.views import generic
-from django.views.generic import CreateView
-from django.views.generic import UpdateView
-from django.views import View, generic
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
-from django.shortcuts import redirect
-
-from .models import Activity as ActivityModel
-from .models import Activity
-from .models import UserProfile
-from django.http import HttpResponse
-from var_dump import var_dump
-
-from datetime import datetime, timedelta, time
-
-from .forms import ActivityForm, UserForm, ProfileForm
 from django.db import transaction
-from django.contrib import messages
+from django.db.models import Count
+from django.db.models import F
+from django.shortcuts import redirect
+from django.shortcuts import render
 from django.utils.translation import gettext as _
+from django.views import generic
+from django.views.generic import CreateView
+from django.views.generic import UpdateView
 from pygeocoder import Geocoder
 
-from .forms import ActivityForm
-from .models import Activity, get_activities_near, get_waiting_users
+from .forms import ActivityForm, ChooseTagsForm
+from .forms import UserForm, ProfileForm
+from .models import Activity, get_activities_near, get_waiting_users, WaitingUser, Tag
 from .models import Activity as ActivityModel
-from .secret import *
-from pygeocoder import Geocoder
-
-from .forms import ActivityForm
-from .models import Activity, get_activities_near, get_waiting_users
-from .models import Activity as ActivityModel
-from .secret import *
 
 def index(request):
     return render(request, 'pages/index.html')
@@ -76,20 +57,28 @@ def dashboard(request):
 
 @login_required
 def matchmaking(request, lat=None, long=None):
-    """
-    Get events near user if lat and long not none, otherwise request location
-    :param request:
-    :return:
-    """
-    if lat and long:
+
+    tags_query = request.GET.getlist('tags')
+
+    if lat and long and tags_query:
+
+        tags = Tag.objects.filter(name__in=tags_query)
+
+        for tag in tags:
+            waiting, _ = WaitingUser.objects.get_or_create(user=request.user, tag=tag)
+            waiting.started_at = datetime.now()
+            waiting.save()
 
         # Gets activities near the users with open places
         activities = get_activities_near(lat, long) \
+            .filter(tags__activity__tags__in=tags) \
             .filter(date__gte=datetime.now().date()) \
             .annotate(users_count=Count("users")) \
             .filter(users_count__lt=F("max_participants"))
 
         return render(request, 'pages/matchmaking/index.html', {"activities": activities})
+    elif lat and long:
+        return render(request, 'pages/matchmaking/ask_tags.html', {"form": ChooseTagsForm()})
     else:
         return render(request, 'pages/matchmaking/ask_location.html', {})
 
