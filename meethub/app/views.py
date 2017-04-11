@@ -12,13 +12,36 @@ from django.shortcuts import render
 from django.views import generic
 from django.views.generic import CreateView
 from django.views.generic import UpdateView
+from django.views import View, generic
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
+from django.shortcuts import redirect
+
+from .models import Activity as ActivityModel
+from .models import Activity
+from .models import UserProfile
+from django.http import HttpResponse
+from var_dump import var_dump
+
+from datetime import datetime, timedelta, time
+
+from .forms import ActivityForm, UserForm, ProfileForm
+from django.db import transaction
+from django.contrib import messages
+from django.utils.translation import gettext as _
 from pygeocoder import Geocoder
 
 from .forms import ActivityForm
 from .models import Activity, get_activities_near, get_waiting_users
 from .models import Activity as ActivityModel
-from secret import *
+from .secret import *
+from pygeocoder import Geocoder
 
+from .forms import ActivityForm
+from .models import Activity, get_activities_near, get_waiting_users
+from .models import Activity as ActivityModel
+from .secret import *
 
 def index(request):
     return render(request, 'pages/index.html')
@@ -116,3 +139,42 @@ class ActivityDetailView(LoginRequiredMixin, generic.DetailView):
         context['disqus_auth'] = message.decode("utf-8") + ' ' + signature.hexdigest() + ' ' + str(timestamp)
 
         return context
+
+
+class UserProfileDetailView(LoginRequiredMixin, generic.DetailView):
+    model = User
+    template_name = 'user/profile.html'
+    context_object_name = 'user'
+    today = datetime.now()
+
+    def activities_done(self):
+        return self.object.participants.filter(date__lte=self.today).order_by('-date')
+
+    def next_activities(self):
+        return self.object.participants.filter(date__gte=self.today).order_by('date')
+
+    def age(self):
+        return self.today.year - self.object.userprofile.birthdate.year - ((self.today.month, self.today.day) < (self.object.userprofile.birthdate.month, self.object.userprofile.birthdate.day))
+
+
+@login_required
+@transaction.atomic
+def update_profile(request):
+    if request.method == 'POST':
+        user_form = UserForm(request.POST, instance=request.user)
+        profile_form = ProfileForm(request.POST, request.FILES, instance=request.user.userprofile)
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request, _('Votre profil a bien été mis à jour !'))
+            return redirect('profile', pk=request.user.id)
+        else:
+            messages.error(request, _('Corrigez les erreurs...'))
+
+    else:
+        user_form = UserForm(instance=request.user)
+        profile_form = ProfileForm(instance=request.user.userprofile)
+    return render(request, 'user/update.html', {
+        'user_form': user_form,
+        'profile_form': profile_form
+    })

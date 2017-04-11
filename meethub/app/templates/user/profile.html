@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+{% load static %}
+{% block content %}
+{% load l10n %}
+    <div class="container">
+      <h1></h1>
+    <div class="row" id="dashboard-top">
+        <div class="col-12">
+            <div class="row white_row">
+                <!-- Profil -->
+                <h6 style="background: #34495e;color:white;padding:10px;text-align:center;width:100%;font-weight:400;">Profil</h6>
+                <div class="col-4">
+                <div class="row">
+                  <div class="col-12">
+                    <img src="{% if user.userprofile.image %}{{user.userprofile.image.url}}{% else %}http://www.yesuart.com/images/default-user.png{% endif %}" alt="..." style="width:15vw;height:15vw;display:block;margin: 0 auto;margin-bottom:20px;" class="rounded-circle center">
+                  </div>
+                  <div class="col-12">
+                    <p style="text-align:center;font-size:22px;line-height:21px;">
+                      {{user.get_full_name}}
+                      <br/>
+                      {% if user.userprofile.birthdate %}
+                      <span style="text-align:center;font-size:18px;">{{view.age}} ans</span>
+                      {% endif %}
+                    </p>
+
+                  </div>
+                  <a class="btn btn-small btn-primary" href="{% url 'profile-update' %}">Modifier le profil</a>
+                </div>
+              </div>
+                <div class="col-6" style="text-align: justify;display:flex;align-items:center;justify-content:center;">
+                  <div>
+                  <blockquote class="custom-quote" style="font-size:18px;">
+                    {% if not user.userprofile %}
+                      <p><i class="fa fa-quote-left" aria-hidden="true" style="color:#34495e;font-size:32px;"></i> Viverra magna pellentesque in magnis gravida sit augue felis vehicula vestibulum semper penatibus justo ornare semper Gravida felis platea arcu mus non. Montes at posuere. Natoque.</p>
+                    {% else %}
+                      <p><i class="fa fa-quote-left" aria-hidden="true" style="color:#34495e;font-size:32px;"></i>&nbsp;{{user.userprofile.bio}}</p>
+                    {% endif %}
+                  </blockquote>
+                  <footer class="blockquote-footer" style="font-size: 22px;">{{ user.username }}</footer>
+                </div>
+                </div>
+            </div>
+
+            <div class="row white_row">
+                <!-- Liste des amis -->
+                <h6 style="background: #34495e;color:white;padding:10px;text-align:center;width:100%;font-weight:400;">Amis</h6>
+                <div class="list-group" style="width:100%">
+                  <div class="row">
+                    <div class="col-3">
+                      <p>Les amis ici ! Oui !</p>
+                    </div>
+                  </div>
+              </div>
+            </div>
+
+            <div class="row white_row">
+                <!-- Activités prochaines -->
+                <h6 style="background: #34495e;color:white;padding:10px;text-align:center;width:100%;font-weight:400;">Prochaines activités</h6>
+                <div class="list-group" style="width:100%">
+                  <div class="row">
+                  {% for activity in view.next_activities %}
+                  <div class="col-6">
+
+                  <a href="{% url 'activity' pk=activity.id %}" class="list-group-item list-group-item-action flex-column align-items-start border-0">
+                    <div class="d-flex w-100 justify-content-between">
+                      <h5 class="mb-1">{{ activity.title }}</h5>
+                      <small>{{ activity.date }}</small>
+                    </div>
+                    <small>{{ activity.description }}</small>
+                  </a>
+                </div>
+
+                {% if forloop.counter|divisibleby:2 and forloop.counter0 != 0 %}
+              </div>
+              <div class="row">
+                {% endif %}
+                  {% endfor %}
+                </div>
+            </div>
+          </div>
+            <div class="row white_row">
+                <!-- Activités terminées -->
+                <h6 style="background: #34495e;color:white;padding:10px;text-align:center;width:100%;font-weight:400;">Activités terminées</h6>
+                <div class="list-group" style="width:100%">
+                  <div class="row">
+                  {% for activity in view.activities_done %}
+                  <div class="col-6">
+                  <a href="{% url 'activity' pk=activity.id %}" class="list-group-item list-group-item-action flex-column align-items-start border-0">
+                    <div class="d-flex w-100 justify-content-between">
+                      <h5 class="mb-1">{{ activity.title }}</h5>
+                      <small>{{ activity.date }}</small>
+                    </div>
+                    <small>{{ activity.description }}</small>
+                  </a>
+                </div>
+                {% if forloop.counter|divisibleby:2 and forloop.counter0 != 0 %}
+              </div>
+              <div class="row">
+                {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+    </div>
+{% endblock %}

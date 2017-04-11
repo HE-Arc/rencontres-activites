@@ -12,16 +12,16 @@
                 <!-- Profil -->
                 <h6 style="background: #34495e;color:white;padding:10px;text-align:center;width:100%;font-weight:400;">Profil</h6>
                 <div class="col-12" style="text-align: center">
-                    <img src="https://infinit8.io/wp-content/uploads/2016/10/Bryan700x700-1.png" alt="..." style="max-width:170px" class="rounded-circle">
+                  <img src="{% if user.userprofile.image %}{{user.userprofile.image.url}}{% else %}http://www.yesuart.com/images/default-user.png{% endif %}" alt="..." style="width:12vw;height:12vw;display:block;margin: 0 auto;margin-bottom:20px;" class="rounded-circle center">
                 </div>
-                <div class="col-10 offset-1" style="text-align:center;padding:10px;">
-                    <span id="profil-username" style="font-size:16px;font-weight: bold;">{{ request.user.username }}</span>
+                <div class="col-10 offset-1" style="text-align:center;">
+                    <span id="profil-username" style="font-size:22px;font-weight: bold;">{{ request.user.username }}</span>
                 </div>
                 <div class="col-12" style="text-align: justify;">
                     <p style="font-size:14px;">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam facilisis mi ut lacus sodales convallis.
-                        Donec facilisis sem bibendum maximus tincidunt. Pellentesque in nisl a metus dictum pretium eget sit
-                        amet arcu.
+                      {% if user.userprofile %}
+                        <p><i class="fa fa-quote-left" aria-hidden="true" style="color:#34495e;font-size:32px;"></i>&nbsp;{{user.userprofile.bio}}</p>
+                      {% endif %}
                     </p>
                 </div>
             </div>

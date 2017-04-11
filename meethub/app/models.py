@@ -3,6 +3,8 @@ from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.measure import D
 from django.db import models
 from django.contrib.gis.db import models as gmodels
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.contrib.gis.geos import Point
 
 
@@ -54,3 +56,21 @@ class WaitingUser(models.Model):
 
     # Time since last refresh of waiting user
     started_at = models.DateTimeField(null=True)
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    bio = models.TextField(null=True, max_length=255)
+    image = models.ImageField(blank=True, upload_to='uploads/img/avatars')
+    birthdate = models.DateField(blank=True, null=True)
+
+
+@receiver(post_save, sender=User)
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
+
+
+@receiver(post_save, sender=User)
+def save_user_profile(sender, instance, **kwargs):
+    instance.userprofile.save()

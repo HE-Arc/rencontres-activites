@@ -8,6 +8,7 @@
     <title>{% block title %}MeetHub{% endblock %}</title>
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'css/font-awesome.min.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/appstyle.css' %}">
   {% block styles %} {% endblock %}
     <link ref="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.6.4/css/bootstrap-datepicker.min.css" />
@@ -43,7 +44,7 @@
               <a class="nav-link" href="#">Matchmaking</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Profil</a>
+              <a class="nav-link" href="{% url 'profile' pk=user.id %}">Profil</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{% url 'activity-add' %}">Créer une activité</a>
@@ -55,6 +56,19 @@
           </ul>
         </div>
     </nav>
+    {% if messages %}
+    <div class="container">
+
+      {% for message in messages %}
+      <div class="alert alert-info alert-dismissible fade show" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+        <strong>{% if message.tags %} {{ message.tags }} ! &nbsp;{% endif %}</strong> {{ message }}
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
     {% block content %}{% endblock %}
   </body>
 </html>

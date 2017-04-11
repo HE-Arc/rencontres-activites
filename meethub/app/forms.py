@@ -1,6 +1,7 @@
 from django import forms
 from mapwidgets.widgets import GooglePointFieldWidget
 
+from .models import Activity,User, UserProfile
 from .models import Activity
 from .widgets import UserCarouselMultiSelectWidget, Html5Date, Html5Time
 
@@ -29,4 +30,18 @@ class ActivityForm(forms.ModelForm):
             "position": GooglePointFieldWidget,
             'date': Html5Date,
             "time": Html5Time
+        }
+
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name', 'email')
+
+class ProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ('bio', 'image', 'birthdate')
+
+        widgets = {
+            "birthdate": Html5Date,
         }
