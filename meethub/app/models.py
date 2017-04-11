@@ -51,3 +51,6 @@ class Tag(models.Model):
 class WaitingUser(models.Model):
     users = models.ManyToManyField(User)
     tag = models.ForeignKey('Tag')
+
+    # Time since last refresh of waiting user
+    started_at = models.DateTimeField(null=True)
