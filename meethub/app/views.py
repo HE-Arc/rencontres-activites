@@ -12,6 +12,10 @@ from django.db import transaction
 from django.db.models import Count
 from django.db.models import F
 from django.shortcuts import redirect
+
+from django.core import serializers
+from django.forms import forms
+
 from django.shortcuts import render
 from django.utils.translation import gettext as _
 from django.views import generic
@@ -26,6 +30,8 @@ from .models import Activity as ActivityModel
 from secret import *
 from friendship.models import Friend, Follow
 from friendship.models import FriendshipRequest
+
+
 def index(request):
     return render(request, 'pages/index.html')
 

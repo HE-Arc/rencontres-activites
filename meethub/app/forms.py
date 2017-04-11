@@ -37,7 +37,6 @@ class ActivityForm(forms.ModelForm):
             "time": Html5Time
         }
 
-
 class UserForm(forms.ModelForm):
     class Meta:
         model = User
