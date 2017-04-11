@@ -40,15 +40,11 @@
                         <h5 class="mb-1" style="display:inline;vertical-align:middle;">{{ r.from_user.username }}</h5>
                       </div>
                       <div>
-                        <form method="post" action="friend/accept" style="display:inline">
+                        <form method="post" action="{% url 'manage-friend' %}" style="display:inline">
                           {% csrf_token %}
                           <input type="hidden" name="request_id" value="{{r.id}}">
-                          <button type="submit" class="btn btn-small btn-success"><i class="fa fa-check" aria-hidden="true"></i></button>
-                        </form>
-                        <form method="post" action="friend/reject" style="display:inline">
-                          {% csrf_token %}
-                          <input type="hidden" name="request_id" value="{{r.id}}">
-                          <button type="submit" class="btn btn-small btn-danger"><i class="fa fa-times" aria-hidden="true"></i></button>
+                          <button type="submit" class="btn btn-small btn-success" name="action" value="accept"><i class="fa fa-check" aria-hidden="true"></i></button>
+                          <button type="submit" class="btn btn-small btn-danger" name="action" value="reject"><i class="fa fa-times" aria-hidden="true"></i></button>
                         </form>
                       </div>
                     </div>

@@ -185,25 +185,20 @@ class AddUserAsAFriend(LoginRequiredMixin, generic.View):
         return redirect(request.META.get('HTTP_REFERER'))
 
 
-class AcceptFriendshipRequest(LoginRequiredMixin, generic.View):
+class ManageFriendshipRequest(LoginRequiredMixin, generic.View):
     model = FriendshipRequest
 
     def post(self, request):
         friend_request = FriendshipRequest.objects.get(pk=int(request.POST.get('request_id')))
-        friend_request.accept()
-        message = friend_request.from_user.username + " est maintenant votre ami(e) !"
-        messages.info(request, message)
-        return redirect(request.META.get('HTTP_REFERER'))
+        
+        if request.POST.get('action') == 'accept':
+            friend_request.accept()
+            message = friend_request.from_user.username + " est maintenant votre ami(e) !"
 
+        elif request.POST.get('action') == 'reject':
+            friend_request.delete()
+            message = friend_request.from_user.username + " n'est pas votre ami !"
 
-class RejectFriendshipRequest(LoginRequiredMixin, generic.View):
-    model = FriendshipRequest
-
-    def post(self, request):
-        friend_request = FriendshipRequest.objects.get(pk=int(request.POST.get('request_id')))
-        #friend_request.reject()
-        friend_request.delete()
-        message = friend_request.from_user.username + " n'est pas votre ami !"
         messages.info(request, message)
         return redirect(request.META.get('HTTP_REFERER'))
 
