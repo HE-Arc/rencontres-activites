@@ -23,7 +23,7 @@ from .forms import ActivityForm, ChooseTagsForm
 from .forms import UserForm, ProfileForm
 from .models import Activity, get_activities_near, get_waiting_users, WaitingUser, Tag
 from .models import Activity as ActivityModel
-from .secret import *
+from secret import *
 from friendship.models import Friend, Follow
 from friendship.models import FriendshipRequest
 def index(request):
@@ -135,6 +135,16 @@ class ActivityDetailView(LoginRequiredMixin, generic.DetailView):
         context['disqus_auth'] = message.decode("utf-8") + ' ' + signature.hexdigest() + ' ' + str(timestamp)
 
         return context
+
+    def post(self, request, pk):
+        activity = Activity.objects.get(pk=(int(pk)))
+        if(request.POST.get('join_id')):
+            user = User.objects.get(pk=int(request.POST.get('join_id')))
+            activity.users.add(user)
+        else:
+            user = User.objects.get(pk=int(request.POST.get('quit_id')))
+            activity.users.remove(user)
+        return redirect(request.META.get('HTTP_REFERER'))
 
 
 class UserProfileDetailView(LoginRequiredMixin, generic.DetailView):
