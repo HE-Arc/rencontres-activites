@@ -25,6 +25,39 @@
                     </p>
                 </div>
             </div>
+
+            <div class="row white_row">
+                <!-- Activités terminées -->
+                <h6 style="background: #34495e;color:white;padding:10px;text-align:center;width:100%;font-weight:400;">Demandes d'amis</h6>
+                <div class="list-group" style="width:100%">
+
+                  {% for r in requests %}
+
+                  <a href="{% url 'profile' pk=r.from_user.id %}" class="list-group-item list-group-item-action flex-column align-items-start border-0">
+                    <div class="d-flex w-100 justify-content-between">
+                      <div>
+                        <img src="{{ r.from_user.userprofile.image.url }}" style="width:2vw;height:2vw;display:inline" class="rounded-circle center">
+                        <h5 class="mb-1" style="display:inline;vertical-align:middle;">{{ r.from_user.username }}</h5>
+                      </div>
+                      <div>
+                        <form method="post" action="friend/accept" style="display:inline">
+                          {% csrf_token %}
+                          <input type="hidden" name="request_id" value="{{r.id}}">
+                          <button type="submit" class="btn btn-small btn-success"><i class="fa fa-check" aria-hidden="true"></i></button>
+                        </form>
+                        <form method="post" action="friend/reject" style="display:inline">
+                          {% csrf_token %}
+                          <input type="hidden" name="request_id" value="{{r.id}}">
+                          <button type="submit" class="btn btn-small btn-danger"><i class="fa fa-times" aria-hidden="true"></i></button>
+                        </form>
+                      </div>
+                    </div>
+                  </a>
+
+                  {% endfor %}
+                </div>
+            </div>
+
             <div class="row white_row">
                 <!-- Activités terminées -->
                 <h6 style="background: #34495e;color:white;padding:10px;text-align:center;width:100%;font-weight:400;">Activités terminées</h6>
