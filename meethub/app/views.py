@@ -6,6 +6,8 @@ from datetime import datetime
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Count
+from django.db.models import F
 from django.shortcuts import render
 from django.views import generic
 from django.views.generic import CreateView
@@ -31,7 +33,7 @@ def dashboard(request):
     # Get the informations of the logged user
 
     # Get the three latest activities done by the user
-    activities_done_by_the_user = u.participants.filter(date__lte=today).order_by('-date')[:3];
+    activities_done_by_the_user = u.participants.filter(date__lte=today).order_by('-date')[:3]
     # Get the three next activities of the user
     next_activities_of_the_user = u.participants.filter(date__gte=today).order_by('date')[:3]
     # Get the first 10 upcoming activities.
@@ -57,8 +59,13 @@ def matchmaking(request, lat=None, long=None):
     :return:
     """
     if lat and long:
-        # TODO: check where there's still place && add user to waiting list
-        activities = get_activities_near(lat, long).filter(date__gte=datetime.now().date())
+
+        # Gets activities near the users with open places
+        activities = get_activities_near(lat, long) \
+            .filter(date__gte=datetime.now().date()) \
+            .annotate(users_count=Count("users")) \
+            .filter(users_count__lt=F("max_participants"))
+
         return render(request, 'pages/matchmaking/index.html', {"activities": activities})
     else:
         return render(request, 'pages/matchmaking/ask_location.html', {})
