@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.contrib.auth.models import User
 from django.contrib.gis.db.models.functions import Distance
 from django.contrib.gis.measure import D
@@ -16,15 +18,18 @@ def get_activities_near(lat, long):
         .order_by('distance')
 
 
-def get_waiting_users(user_to_recommend):
+def get_waiting_users(user_to_recommend, tags):
     """
     Returns a list of waiting users who arent near the event
     :param user_to_recommend_friends: the user who receives the recommandation of friends
     :return: a collection of users
     """
 
-    # TODO: return some friends and last seen users
-    return User.objects.all()
+    users = WaitingUser.objects.filter(tag__in=tags, started_at__gte=datetime.now() - datetime.timedelta(minutes=15))
+
+    #TODO: filter by is friend of users_to_recommend
+
+    return users
 
 
 class Activity(models.Model):
@@ -51,8 +56,12 @@ class Tag(models.Model):
 
 
 class WaitingUser(models.Model):
-    users = models.ManyToManyField(User)
+    user = models.ForeignKey(User, related_name="waitings", default=None, null=True)
     tag = models.ForeignKey('Tag')
+
+    # Time since last refresh of waiting user
+    started_at = models.DateTimeField(null=True)
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -60,10 +69,12 @@ class UserProfile(models.Model):
     image = models.ImageField(blank=True, upload_to='uploads/img/avatars')
     birthdate = models.DateField(blank=True, null=True)
 
+
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
+
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):

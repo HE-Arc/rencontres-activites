@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Matchmaking, give your location{% endblock %}
+
+{% block content %} 
+    <div class="container-fluid">
+        <div class="row">
+            <div class="alert alert-info" role="alert">
+              <h4 class="alert-heading">Almost there !</h4>
+              <p>What tags are you intrested by ? </p>
+            </div>
+
+            <form method="GET" />
+                {{ form.as_p }}
+
+                <input type="submit">
+            </form>
+        </div>
+    </div>
+
+{% endblock %}
