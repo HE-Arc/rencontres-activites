@@ -76,7 +76,7 @@ def matchmaking(request, lat=None, long=None):
             .annotate(users_count=Count("users")) \
             .filter(users_count__lt=F("max_participants"))
 
-        return render(request, 'pages/matchmaking/index.html', {"activities": activities})
+        return render(request, 'pages/matchmaking/index.html', {"activities": activities,"form": ChooseTagsForm()})
     elif lat and long:
         return render(request, 'pages/matchmaking/ask_tags.html', {"form": ChooseTagsForm()})
     else:
@@ -90,7 +90,7 @@ class ActivityFormViewCreate(LoginRequiredMixin, CreateView):
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
-        form.fields['users'].queryset = get_waiting_users(self.request.user)
+        form.fields['users'].queryset = get_waiting_users(self.request.user, Tag.objects.all())
         return form
 
     def form_valid(self, form):

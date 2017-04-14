@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 
-from .secret import *
+from secret import *
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -144,3 +144,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 SITE_ID = 1
 ACCOUNT_ACTIVATION_DAYS = 7
 LOGIN_REDIRECT_URL='dashboard'
+
+GOOGLE_MAP_API_KEY = GEOPOSITION_GOOGLE_MAPS_API_KEY
+
+MAP_WIDGETS = {
+    "GOOGLE_MAP_API_KEY": GEOPOSITION_GOOGLE_MAPS_API_KEY
+}

@@ -2,7 +2,9 @@
 
 {% block title %}Matchmaking, give your location{% endblock %}
 
-{% block content %} 
+{% block content %}
+
+    {% load bootstrap4 %}
     <div class="container-fluid">
         <div class="row">
             <div class="alert alert-info" role="alert">
@@ -10,10 +12,14 @@
               <p>What tags are you intrested by ? </p>
             </div>
 
-            <form method="GET" />
-                {{ form.as_p }}
+            <form method="GET" >
+               {% bootstrap_form form %}
 
-                <input type="submit">
+                {% buttons %}
+                    <button type="submit" class="btn btn-primary">
+                        {% bootstrap_icon "star" %} Submit
+                    </button>
+                {% endbuttons %}
             </form>
         </div>
     </div>

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.contrib.auth.models import User
 from django.contrib.gis.db.models.functions import Distance
@@ -25,7 +25,7 @@ def get_waiting_users(user_to_recommend, tags):
     :return: a collection of users
     """
 
-    users = WaitingUser.objects.filter(tag__in=tags, started_at__gte=datetime.now() - datetime.timedelta(minutes=15))
+    users = WaitingUser.objects.filter(tag__in=tags, started_at__gte=datetime.now() - timedelta(minutes=15)).values('user').distinct()
 
     #TODO: filter by is friend of users_to_recommend
 
