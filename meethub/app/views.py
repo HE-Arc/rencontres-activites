@@ -147,8 +147,11 @@ class ActivityDetailView(LoginRequiredMixin, generic.DetailView):
         signature_msg = message.decode('utf-8') + " " + str(timestamp)
         signature = hmac.new(bytes(DISQUS_SECRET_KEY, 'utf-8'), bytes(signature_msg, 'utf-8'), 'sha1')
         context['disqus_auth'] = message.decode("utf-8") + ' ' + signature.hexdigest() + ' ' + str(timestamp)
+        # Waiting list
+        context['waiting_list'] = get_waiting_users(self.request.user, context['activity'].tags.all())
 
         return context
+
 
     def post(self, request, pk):
         activity = Activity.objects.get(pk=(int(pk)))

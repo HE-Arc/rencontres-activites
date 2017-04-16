@@ -25,7 +25,7 @@ def get_waiting_users(user_to_recommend, tags):
     :return: a collection of users
     """
 
-    users = WaitingUser.objects.filter(tag__in=tags, started_at__gte=datetime.now() - timedelta(minutes=15)).values('user').distinct()
+    users = WaitingUser.objects.filter(tag__in=tags, started_at__gte=datetime.now() - timedelta(minutes=15)).distinct('user')
 
     #TODO: filter by distance of user
 
