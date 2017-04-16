@@ -19,6 +19,7 @@ from django.views.generic import CreateView
 from django.views.generic import UpdateView
 from pygeocoder import Geocoder
 
+from secret import DISQUS_SECRET_KEY
 from .forms import ActivityForm, ChooseTagsForm
 from .forms import UserForm, ProfileForm
 from .models import Activity, get_activities_near, get_waiting_users, WaitingUser, Tag

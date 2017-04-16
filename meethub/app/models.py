@@ -27,7 +27,7 @@ def get_waiting_users(user_to_recommend, tags):
 
     users = WaitingUser.objects.filter(tag__in=tags, started_at__gte=datetime.now() - timedelta(minutes=15)).values('user').distinct()
 
-    #TODO: filter by is friend of users_to_recommend
+    #TODO: filter by distance of user
 
     return users
 
