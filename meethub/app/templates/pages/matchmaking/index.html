@@ -35,7 +35,22 @@
                         {% endbuttons %}
                     </form>
                   </div>
+
                 </div>
+
+                <br>
+                <div class="card">
+                  <div class="card-header">
+                    Invitations to activities
+                  </div>
+                  <div class="card-block">
+                    {% for invitation in invitations %}
+                        <p>{{ invitation.event.title }} <a href="{% url "activity" pk=invitation.event.id %}" class="btn btn-outline-primary btn-sm">See</a></p>
+                    {% endfor %}
+                  </div>
+                </div>
+
+
 
             </div>
 
@@ -47,7 +62,13 @@
                                                                   &markers=color:blue%7Clabel:{{activity.title}}%7C{{ activity.position.y|unlocalize }}, {{ activity.position.x|unlocalize }}
                                                                   &key=AIzaSyC7h7I1_X4CyNylo7LEbjRub0SZP5ruLlU" alt="Card image cap">
                   <div class="card-block">
-                    <h4 class="card-title">{{ activity.title }}</h4>
+                    <h4 class="card-title">
+                        {{ activity.title }}
+
+                        {% if activity in activities_where_invited %}
+                            <span class="badge badge-info">You're invited !</span>
+                        {% endif %}
+                    </h4>
                     <p class="card-text">{{ activity.description }}</p>
                     <a href="{% url "activity" pk=activity.id %}" class="btn btn-primary">See details</a>
                   </div>
@@ -68,6 +89,7 @@
 
         </div>
     </div>
+
 {% include "utils/google_maps.html" %}
 <script>
 

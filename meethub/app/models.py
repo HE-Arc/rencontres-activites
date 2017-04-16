@@ -79,3 +79,10 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.userprofile.save()
+
+
+class Invitation(models.Model):
+    to_user = models.ForeignKey(User, related_name="invitations")
+    create_at = models.DateTimeField(default=datetime.now())
+    expires_in = models.DateTimeField(null=True)
+    event = models.ForeignKey(Activity, related_name="invitations")

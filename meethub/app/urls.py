@@ -22,5 +22,6 @@ urlpatterns = [
     url(r'profile/update/$', views.update_profile, name='profile-update'),
     url(r'friend/add', views.AddUserAsAFriend.as_view(), name='add-friend'),
     url(r'friend/manage', views.ManageFriendshipRequest.as_view(), name='manage-friend'),
-    url(r'friend/remove', views.RemoveFriend.as_view(), name='remove-friend')
+    url(r'friend/remove', views.RemoveFriend.as_view(), name='remove-friend'),
+    url(r'invite/(?P<user_to_invite_pk>[0-9]+)/(?P<event_pk>[0-9]+)/$', views.invite_user, name="invite")
 ]

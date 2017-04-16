@@ -2,7 +2,7 @@ import base64
 import calendar
 import hmac
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -11,12 +11,15 @@ from django.contrib.auth.models import User
 from django.db import transaction
 from django.db.models import Count
 from django.db.models import F
-from django.shortcuts import redirect
+from django.http import HttpResponse
+from django.http import HttpResponseRedirect
+from django.shortcuts import redirect, get_object_or_404
 
 from django.core import serializers
 from django.forms import forms
 
 from django.shortcuts import render
+from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views import generic
 from django.views.generic import CreateView
@@ -26,7 +29,7 @@ from pygeocoder import Geocoder
 from secret import DISQUS_SECRET_KEY
 from .forms import ActivityForm, ChooseTagsForm
 from .forms import UserForm, ProfileForm
-from .models import Activity, get_activities_near, get_waiting_users, WaitingUser, Tag
+from .models import Activity, get_activities_near, get_waiting_users, WaitingUser, Tag, Invitation
 from .models import Activity as ActivityModel
 from secret import *
 from friendship.models import Friend, Follow
@@ -71,7 +74,6 @@ def dashboard(request):
 
 @login_required
 def matchmaking(request, lat=None, long=None):
-
     tags_query = request.GET.getlist('tags')
 
     if lat and long and tags_query:
@@ -90,7 +92,12 @@ def matchmaking(request, lat=None, long=None):
             .annotate(users_count=Count("users")) \
             .filter(users_count__lt=F("max_participants"))
 
-        return render(request, 'pages/matchmaking/index.html', {"activities": activities,"form": ChooseTagsForm()})
+        return render(request, 'pages/matchmaking/index.html', {
+            "activities": activities,
+            "form": ChooseTagsForm(),
+            "invitations": request.user.invitations.all(),
+            "activities_where_invited": map(lambda e: e.event, request.user.invitations.all())
+        })
     elif lat and long:
         return render(request, 'pages/matchmaking/ask_tags.html', {"form": ChooseTagsForm()})
     else:
@@ -127,7 +134,7 @@ class ActivityDetailView(LoginRequiredMixin, generic.DetailView):
         context = super(ActivityDetailView, self).get_context_data(**kwargs)
 
         # Reverse Geocode to get the street, the city and the country names
-        #context['coords'] = Geocoder.reverse_geocode(context['activity'].position.y, context['activity'].position.x)
+        # context['coords'] = Geocoder.reverse_geocode(context['activity'].position.y, context['activity'].position.x)
         # Logged User informations
         context['user'] = self.request.user
         # Authentication params for Disqus
@@ -145,7 +152,7 @@ class ActivityDetailView(LoginRequiredMixin, generic.DetailView):
 
     def post(self, request, pk):
         activity = Activity.objects.get(pk=(int(pk)))
-        if(request.POST.get('join_id')):
+        if (request.POST.get('join_id')):
             user = User.objects.get(pk=int(request.POST.get('join_id')))
             activity.users.add(user)
         else:
@@ -164,7 +171,8 @@ class UserProfileDetailView(LoginRequiredMixin, generic.DetailView):
         return Friend.objects.are_friends(self.object, self.request.user)
 
     def isARequestPending(self):
-        return FriendshipRequest.objects.select_related('from_user', 'to_user').filter(to_user=self.object, from_user=self.request.user).all().count()
+        return FriendshipRequest.objects.select_related('from_user', 'to_user').filter(to_user=self.object,
+                                                                                       from_user=self.request.user).all().count()
 
     def friends(self):
         return Friend.objects.friends(self.object)
@@ -176,7 +184,8 @@ class UserProfileDetailView(LoginRequiredMixin, generic.DetailView):
         return self.object.participants.filter(date__gte=self.today).order_by('date')
 
     def age(self):
-        return self.today.year - self.object.userprofile.birthdate.year - ((self.today.month, self.today.day) < (self.object.userprofile.birthdate.month, self.object.userprofile.birthdate.day))
+        return self.today.year - self.object.userprofile.birthdate.year - ((self.today.month, self.today.day) < (
+        self.object.userprofile.birthdate.month, self.object.userprofile.birthdate.day))
 
 
 class AddUserAsAFriend(LoginRequiredMixin, generic.View):
@@ -185,9 +194,9 @@ class AddUserAsAFriend(LoginRequiredMixin, generic.View):
     def post(self, request):
         other_user = User.objects.get(pk=int(request.POST.get('user_id')))
         Friend.objects.add_friend(
-        request.user,                               # The sender
-        other_user,                                 # The recipient
-        message='Hi! I would like to add you')      # This message is optional
+            request.user,  # The sender
+            other_user,  # The recipient
+            message='Hi! I would like to add you')  # This message is optional
         messages.info(request, "Votre demande a été faite !")
         return redirect(request.META.get('HTTP_REFERER'))
 
@@ -197,7 +206,7 @@ class ManageFriendshipRequest(LoginRequiredMixin, generic.View):
 
     def post(self, request):
         friend_request = FriendshipRequest.objects.get(pk=int(request.POST.get('request_id')))
-        
+
         if request.POST.get('action') == 'accept':
             friend_request.accept()
             message = friend_request.from_user.username + " est maintenant votre ami(e) !"
@@ -240,3 +249,24 @@ def update_profile(request):
         'user_form': user_form,
         'profile_form': profile_form
     })
+
+
+@login_required()
+def invite_user(request, user_to_invite_pk, event_pk):
+    event = get_object_or_404(Activity, id=event_pk)
+
+    if event.admin == request.user:
+        user_to_invite = get_object_or_404(User, id=user_to_invite_pk)
+
+        invitation, _ = Invitation.objects.get_or_create(
+            event=event,
+            to_user=user_to_invite
+        )
+        invitation.expires_in = datetime.now() + timedelta(minutes=30)
+        invitation.save()
+
+        user_to_invite.invitations.add(invitation)
+
+        return HttpResponseRedirect(reverse("activity", kwargs={"pk": event.id}))
+    else:
+        return HttpResponse('Unauthorized', status=401)
