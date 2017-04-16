@@ -72,8 +72,10 @@
                         <a href="{% url 'profile' pk=friend.id %}" class="list-group-item list-group-item-action flex-column align-items-start border-0">
                           <div class="d-flex w-100 justify-content-between">
                             <div>
+                                {% if frind.userprofile.image %}
                               <img src="{{ friend.userprofile.image.url }}" style="width:4vw;height:4vw;display:inline" class="rounded-circle center">
-                              <h5 class="mb-1" style="display:inline;vertical-align:middle;">{{ friend.username }}</h5>
+                                {% endif %}
+                                <h5 class="mb-1" style="display:inline;vertical-align:middle;">{{ friend.username }}</h5>
                             </div>
                           </div>
                         </a>

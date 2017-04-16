@@ -1,13 +1,21 @@
+## The following requirements were added by pip freeze:
 appdirs==1.4.0
 disqus==0.0.4
 Django==1.10.5
+django-bootstrap3-datetimepicker==2.2.3
 django-disqus==0.5
+django-friendship==1.5.0
 django-geoposition==0.3.0
 django-map-widgets==0.1.8
+django-registration==2.2
 mock==2.0.0
+olefile==0.44
 packaging==16.8
 pbr==2.0.0
+Pillow==4.1.0
 psycopg2==2.7.1
+pygeocoder==1.2.5
 pyparsing==2.1.10
+requests==2.13.0
+simplejson==3.10.0
 six==1.10.0
-django-registration==2.2

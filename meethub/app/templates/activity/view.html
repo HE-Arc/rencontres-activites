@@ -39,7 +39,7 @@
                                     <ul class="list-group list-group-flush">
                                         <li class="list-group-item">{{ activity.date }}</li>
                                         <li class="list-group-item">{{ activity.time }}</li>
-                                        <li class="list-group-item">{{ coords.street_address|default_if_none:"-"  }}
+                                        <li class="list-group-item" id="location-name">{{ coords.street_address|default_if_none:"-"  }}
                                                                     ,{{ coords.city|default_if_none:"-"  }}
                                                                     , {{ coords.country|default_if_none:"-" }}
                                         </li>
@@ -79,7 +79,7 @@
                                 <div class="card-block">
                                     <h4 class="card-title text-center">{{ participant.username }}</h4>
                                     <!--<p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>-->
-                                    <!--<a href="#" class="btn btn-primary">Go somewhere</a>-->
+                                    <a href="{% url "profile" pk=participant.id %}" class="btn btn-primary">See profile</a>
                                 </div>
                             </div>
                         {% endfor %}
@@ -126,6 +126,21 @@
             }
             addMarker({{ activity.position.y|unlocalize }}, {{ activity.position.x|unlocalize }}, "{{ coords.street_address|default_if_none:"-"  }}, {{ coords.city|default_if_none:"-"  }}, {{ coords.country|default_if_none:"-" }}");
             map.fitBounds(bounds);
+
+            var geocoder = new google.maps.Geocoder;
+
+            var latlng = {
+                lat: parseFloat('{{ activity.position.y }}'.replace(",", ".")),
+                lng: parseFloat('{{ activity.position.x }}'.replace(",", "."))
+            };
+
+            geocoder.geocode({'location': latlng}, function(results, status) {
+              if (status === 'OK' && results[1]) {
+                $("#location-name").html(results[0].formatted_address);
+              } else {
+                console.log('Geocoder failed due to: ' + status);
+              }
+            });
         }
         google.maps.event.addDomListener(window, 'load', initialize);
     </script>

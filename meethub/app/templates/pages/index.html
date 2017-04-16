@@ -13,12 +13,15 @@
                         <h3>Le meilleur endroit pour faire ce que vous aimez !</h3>
                         <hr class="intro-divider">
                         <ul class="list-inline intro-social-buttons">
+
+                            {% if not user.is_authenticated %}
                             <li>
                                 <a href="{% url 'registration_register' %}" class="btn btn-default btn-lg">Inscription</a>
                             </li>
                             <li>
                                 <a href="{% url 'login' %}" class="btn btn-default btn-lg">Connexion</a>
                             </li>
+                            {% endif %}
                         </ul>
                     </div>
                 </div>

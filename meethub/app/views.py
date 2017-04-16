@@ -104,7 +104,7 @@ class ActivityFormViewCreate(LoginRequiredMixin, CreateView):
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
-        form.fields['users'].queryset = get_waiting_users(self.request.user, Tag.objects.all())
+        form.fields['users'].widget.choices = Friend.objects.friends(self.request.user)
         return form
 
     def form_valid(self, form):
@@ -127,7 +127,7 @@ class ActivityDetailView(LoginRequiredMixin, generic.DetailView):
         context = super(ActivityDetailView, self).get_context_data(**kwargs)
 
         # Reverse Geocode to get the street, the city and the country names
-        context['coords'] = Geocoder.reverse_geocode(context['activity'].position.y, context['activity'].position.x)
+        #context['coords'] = Geocoder.reverse_geocode(context['activity'].position.y, context['activity'].position.x)
         # Logged User informations
         context['user'] = self.request.user
         # Authentication params for Disqus
