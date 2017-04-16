@@ -12,6 +12,10 @@ from django.db import transaction
 from django.db.models import Count
 from django.db.models import F
 from django.shortcuts import redirect
+
+from django.core import serializers
+from django.forms import forms
+
 from django.shortcuts import render
 from django.utils.translation import gettext as _
 from django.views import generic
@@ -24,6 +28,10 @@ from .forms import ActivityForm, ChooseTagsForm
 from .forms import UserForm, ProfileForm
 from .models import Activity, get_activities_near, get_waiting_users, WaitingUser, Tag
 from .models import Activity as ActivityModel
+from secret import *
+from friendship.models import Friend, Follow
+from friendship.models import FriendshipRequest
+
 
 def index(request):
     return render(request, 'pages/index.html')
@@ -44,10 +52,15 @@ def dashboard(request):
     # Get the first 10 upcoming activities.
     upcoming_activities = Activity.objects.filter(date__gte=today).order_by('date')[:10]
 
+    # Get the friend's requests for the authenticated user
+    friendshipsRequests = FriendshipRequest.objects.filter(to_user=u).all()
+
     # Give the informations to the view
     context['activities_done'] = activities_done_by_the_user
     context['next_activities'] = next_activities_of_the_user
     context['upcoming_activities'] = upcoming_activities
+
+    context['requests'] = friendshipsRequests
 
     context['api_key_map'] = "AIzaSyD48NmCV_kXSHmaGQSdEGojD7vkcRcNqME"
 
@@ -130,12 +143,31 @@ class ActivityDetailView(LoginRequiredMixin, generic.DetailView):
 
         return context
 
+    def post(self, request, pk):
+        activity = Activity.objects.get(pk=(int(pk)))
+        if(request.POST.get('join_id')):
+            user = User.objects.get(pk=int(request.POST.get('join_id')))
+            activity.users.add(user)
+        else:
+            user = User.objects.get(pk=int(request.POST.get('quit_id')))
+            activity.users.remove(user)
+        return redirect(request.META.get('HTTP_REFERER'))
+
 
 class UserProfileDetailView(LoginRequiredMixin, generic.DetailView):
     model = User
     template_name = 'user/profile.html'
     context_object_name = 'user'
     today = datetime.now()
+
+    def isAFriend(self):
+        return Friend.objects.are_friends(self.object, self.request.user)
+
+    def isARequestPending(self):
+        return FriendshipRequest.objects.select_related('from_user', 'to_user').filter(to_user=self.object, from_user=self.request.user).all().count()
+
+    def friends(self):
+        return Friend.objects.friends(self.object)
 
     def activities_done(self):
         return self.object.participants.filter(date__lte=self.today).order_by('-date')
@@ -145,6 +177,46 @@ class UserProfileDetailView(LoginRequiredMixin, generic.DetailView):
 
     def age(self):
         return self.today.year - self.object.userprofile.birthdate.year - ((self.today.month, self.today.day) < (self.object.userprofile.birthdate.month, self.object.userprofile.birthdate.day))
+
+
+class AddUserAsAFriend(LoginRequiredMixin, generic.View):
+    model = Friend
+
+    def post(self, request):
+        other_user = User.objects.get(pk=int(request.POST.get('user_id')))
+        Friend.objects.add_friend(
+        request.user,                               # The sender
+        other_user,                                 # The recipient
+        message='Hi! I would like to add you')      # This message is optional
+        messages.info(request, "Votre demande a été faite !")
+        return redirect(request.META.get('HTTP_REFERER'))
+
+
+class ManageFriendshipRequest(LoginRequiredMixin, generic.View):
+    model = FriendshipRequest
+
+    def post(self, request):
+        friend_request = FriendshipRequest.objects.get(pk=int(request.POST.get('request_id')))
+        
+        if request.POST.get('action') == 'accept':
+            friend_request.accept()
+            message = friend_request.from_user.username + " est maintenant votre ami(e) !"
+
+        elif request.POST.get('action') == 'reject':
+            friend_request.delete()
+            message = friend_request.from_user.username + " n'est pas votre ami !"
+
+        messages.info(request, message)
+        return redirect(request.META.get('HTTP_REFERER'))
+
+
+class RemoveFriend(LoginRequiredMixin, generic.View):
+    model = Friend
+
+    def post(self, request):
+        Friend.objects.remove_friend(request.user, User.objects.get(pk=int(request.POST.get('friend_id'))))
+        messages.info(request, "Vous n'êtes plus amis !")
+        return redirect(request.META.get('HTTP_REFERER'))
 
 
 @login_required

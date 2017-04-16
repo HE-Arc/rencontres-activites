@@ -2,10 +2,10 @@
 
 {% block title %}Dashboard{% endblock %}
 {% load static %}
+{% load friendshiptags %}
 {% block content %}
 {% load l10n %}
     <div class="container">
-      <h1></h1>
     <div class="row" id="dashboard-top">
         <div class="col-12">
             <div class="row white_row">
@@ -24,9 +24,28 @@
                       <span style="text-align:center;font-size:18px;">{{view.age}} ans</span>
                       {% endif %}
                     </p>
-
                   </div>
+                  {% if user == request.user %}
                   <a class="btn btn-small btn-primary" href="{% url 'profile-update' %}">Modifier le profil</a>
+                  {% else %}
+                    {% if view.isAFriend %}
+                    <form method="post" action="friend/remove">
+                      {% csrf_token %}
+                      <input type="hidden" name="friend_id" value="{{user.id}}">
+                      <button type="submit" class="btn btn-small btn-danger">Supprimer de mes amis</button>
+                    </form>
+                    {% else %}
+                       {% if view.isARequestPending %}
+                        Une demande a été faite !
+                       {% else %}
+                       <form method="post" action="friend/add">
+                         {% csrf_token %}
+                         <input type="hidden" name="user_id" value="{{user.id}}"/>
+                         <button type="submit" class="btn btn-success">Demander comme ami</button>
+                       </form>
+                       {% endif %}
+                    {% endif %}
+                  {% endif %}
                 </div>
               </div>
                 <div class="col-6" style="text-align: justify;display:flex;align-items:center;justify-content:center;">
@@ -48,9 +67,23 @@
                 <h6 style="background: #34495e;color:white;padding:10px;text-align:center;width:100%;font-weight:400;">Amis</h6>
                 <div class="list-group" style="width:100%">
                   <div class="row">
-                    <div class="col-3">
-                      <p>Les amis ici ! Oui !</p>
-                    </div>
+                    {% for friend in view.friends %}
+                      <div class="col-3">
+                        <a href="{% url 'profile' pk=friend.id %}" class="list-group-item list-group-item-action flex-column align-items-start border-0">
+                          <div class="d-flex w-100 justify-content-between">
+                            <div>
+                              <img src="{{ friend.userprofile.image.url }}" style="width:4vw;height:4vw;display:inline" class="rounded-circle center">
+                              <h5 class="mb-1" style="display:inline;vertical-align:middle;">{{ friend.username }}</h5>
+                            </div>
+                          </div>
+                        </a>
+                      </div>
+                    {% if forloop.counter|divisibleby:4 and forloop.counter0 != 0 %}
+                      </div>
+                      <div class="row">
+                    {% endif %}
+                    {% endfor %}
+
                   </div>
               </div>
             </div>
