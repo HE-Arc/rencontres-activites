@@ -53,7 +53,7 @@ def dashboard(request):
     # Get the three next activities of the user
     next_activities_of_the_user = u.participants.filter(date_time__gte=today).order_by('date_time')[:3]
     # Get the first 10 upcoming activities.
-    upcoming_activities = Activity.objects.filter(date_time__gte=today).order_by('date_time')[:10]
+    upcoming_activities = Activity.objects.filter(date_time__gte=today).order_by('date_time')
 
     # Get the friend's requests for the authenticated user
     friendshipsRequests = FriendshipRequest.objects.filter(to_user=u).all()
@@ -65,7 +65,7 @@ def dashboard(request):
 
     context['requests'] = friendshipsRequests
 
-    context['api_key_map'] = "AIzaSyD48NmCV_kXSHmaGQSdEGojD7vkcRcNqME"
+    context['api_key_map'] = GEOPOSITION_GOOGLE_MAPS_API_KEY
 
     activities = Activity.objects.all()
     context['activities'] = activities
