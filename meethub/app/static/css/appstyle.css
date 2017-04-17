@@ -1,3 +1,6 @@
+html, body{
+  height:100%;
+}
 .white_row{
     border:1px solid rgba(0, 0, 0, 0.125);background:#fff;border-radius:.25rem;margin-bottom: 1.5rem !important;
 }
@@ -26,8 +29,6 @@ a:hover{
   color: black;
 }
 .btn-primary{
-  background: #34495e;
-  border-color:#34495e;
 }
 
 .intro-header {
@@ -88,4 +89,23 @@ a:hover{
 }
 .datepicker{
   padding: .5rem .75rem;
+}
+.navbar-default .navbar-toggle .navbar-toggle-icon {
+    background-color: black;
+}
+.row-title{
+  background: #34495e;
+  color:white;
+  padding: .75rem 1.25rem;
+  border-radius: calc(.25rem - 1px) calc(.25rem - 1px) 0 0;
+  text-align:center;
+  width:100%;
+  font-weight:400;
+}
+footer-site{
+  width:100%;
+  height:60px;
+  line-height: 60px;
+  background:whitesmoke;
+  border-top:1px solid #EEE;
 }

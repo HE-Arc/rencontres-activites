@@ -5,13 +5,17 @@
 {% block content %}
 
     {% load bootstrap4 %}
-    <div class="container-fluid">
+    <div class="container">
         <div class="row">
+          <div class="col-10 offset-1">
             <div class="alert alert-info" role="alert">
               <h4 class="alert-heading">Almost there !</h4>
               <p>What tags are you intrested by ? </p>
             </div>
-
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-10 offset-1">
             <form method="GET" >
                {% bootstrap_form form %}
 
@@ -21,6 +25,7 @@
                     </button>
                 {% endbuttons %}
             </form>
+          </div>
         </div>
     </div>
 

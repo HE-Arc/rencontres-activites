@@ -10,7 +10,7 @@
         <div class="col-12">
             <div class="row white_row">
                 <!-- Profil -->
-                <h6 style="background: #34495e;color:white;padding:10px;text-align:center;width:100%;font-weight:400;">Profil</h6>
+                <h6 class="row-title">Profil</h6>
                 <div class="col-4">
                 <div class="row">
                   <div class="col-12">
@@ -36,7 +36,7 @@
                     </form>
                     {% else %}
                        {% if view.isARequestPending %}
-                        Une demande a été faite !
+                     <span class="badge badge-pill badge-primary ml-2 mb-2" >Une demande a été faite !</span>
                        {% else %}
                        <form method="post" action="friend/add">
                          {% csrf_token %}
@@ -64,7 +64,7 @@
 
             <div class="row white_row">
                 <!-- Liste des amis -->
-                <h6 style="background: #34495e;color:white;padding:10px;text-align:center;width:100%;font-weight:400;">Amis</h6>
+                <h6 class="row-title">Amis</h6>
                 <div class="list-group" style="width:100%">
                   <div class="row">
                     {% for friend in view.friends %}
@@ -72,9 +72,7 @@
                         <a href="{% url 'profile' pk=friend.id %}" class="list-group-item list-group-item-action flex-column align-items-start border-0">
                           <div class="d-flex w-100 justify-content-between">
                             <div>
-                                {% if frind.userprofile.image %}
-                              <img src="{{ friend.userprofile.image.url }}" style="width:4vw;height:4vw;display:inline" class="rounded-circle center">
-                                {% endif %}
+                                <img src="{% if friend.userprofile.image %}{{friend.userprofile.image.url}}{% else %}http://www.yesuart.com/images/default-user.png{% endif %}" style="width:4vw;height:4vw;display:inline" class="rounded-circle center">
                                 <h5 class="mb-1" style="display:inline;vertical-align:middle;">{{ friend.username }}</h5>
                             </div>
                           </div>
@@ -92,7 +90,7 @@
 
             <div class="row white_row">
                 <!-- Activités prochaines -->
-                <h6 style="background: #34495e;color:white;padding:10px;text-align:center;width:100%;font-weight:400;">Prochaines activités</h6>
+                <h6 class="row-title">Prochaines activités</h6>
                 <div class="list-group" style="width:100%">
                   <div class="row">
                   {% for activity in view.next_activities %}
@@ -117,7 +115,7 @@
           </div>
             <div class="row white_row">
                 <!-- Activités terminées -->
-                <h6 style="background: #34495e;color:white;padding:10px;text-align:center;width:100%;font-weight:400;">Activités terminées</h6>
+                <h6 class="row-title">Activités terminées</h6>
                 <div class="list-group" style="width:100%">
                   <div class="row">
                   {% for activity in view.activities_done %}
@@ -141,7 +139,7 @@
 
             <div class="row white_row">
                 <!-- Activités terminées -->
-                <h6 style="background: #34495e;color:white;padding:10px;text-align:center;width:100%;font-weight:400;">Administrateur</h6>
+                <h6 class="row-title">Administrateur</h6>
                 <div class="list-group" style="width:100%">
                   <div class="row">
                   {% for activity in view.activities_admin %}

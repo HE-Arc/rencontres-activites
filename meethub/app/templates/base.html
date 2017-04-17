@@ -25,7 +25,7 @@
     <script src="{% static 'js/bootstrap-datepicker.min.js' %}"></script>
     <script src="{% static 'js/clockpicker.js' %}"></script>
     <!-- Navbar -->
-    <nav class="navbar navbar-toggleable-md navbar-inverse bg-primary">
+    <nav class="navbar navbar-toggleable-md navbar-light bg-primary">
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
@@ -73,5 +73,10 @@
     </div>
     {% endif %}
     {% block content %}{% endblock %}
+    <footer class="footer footer-site navbar-fixed-bottom">
+      <div class="container">
+        <small>&copy; Copyright 2017, Meethub</small>
+      </div>
+    </footer>
   </body>
 </html>
