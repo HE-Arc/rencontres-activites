@@ -116,15 +116,16 @@
                     <div class="card border-top-0 rounded-0 mt-0">
                         <div class="card-block">
                             {% load disqus_tags %}
-                            {% set_disqus_identifier "activity" %}
-                            {% set_disqus_title activity.title %}
+                            {% set_disqus_identifier activity.id|stringformat:"i" %}
+                            {% set_disqus_url "http://srvz-webapp.he-arc.ch/" request.get_full_path %}
+                            {% set_disqus_title activity.title%}
                                 <script>
                                     var disqus_config = function() {
                                         this.page.remote_auth_s3 = "{{ disqus_auth }}";
                                         this.page.api_key = "52feWIkZMvNio7AVhezz8T28J552MHkeZL7w1YS6PtjWxRUbKkAADWGB70KXT1NC";
                                     }
                                 </script>
-                            {% disqus_show_comments %}
+                            {% disqus_show_comments "meethub-1" %}
                         </div>
                     </div>
 
