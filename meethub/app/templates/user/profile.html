@@ -138,6 +138,30 @@
                 </div>
               </div>
             </div>
+
+            <div class="row white_row">
+                <!-- Activités terminées -->
+                <h6 style="background: #34495e;color:white;padding:10px;text-align:center;width:100%;font-weight:400;">Administrateur</h6>
+                <div class="list-group" style="width:100%">
+                  <div class="row">
+                  {% for activity in view.activities_admin %}
+                  <div class="col-6">
+                  <a href="{% url 'activity' pk=activity.id %}" class="list-group-item list-group-item-action flex-column align-items-start border-0">
+                    <div class="d-flex w-100 justify-content-between">
+                      <h5 class="mb-1">{{ activity.title }}</h5>
+                      <small>{{ activity.date }}</small>
+                    </div>
+                    <small>{{ activity.description }}</small>
+                  </a>
+                </div>
+                {% if forloop.counter|divisibleby:2 and forloop.counter0 != 0 %}
+              </div>
+              <div class="row">
+                {% endif %}
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
         </div>
     </div>
     </div>
