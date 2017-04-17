@@ -38,7 +38,7 @@
                       <div>
                           {% if r.from_user.userprofile.image  %}
                         <img src="{{ r.from_user.userprofile.image.url }}" style="width:2vw;height:2vw;display:inline" class="rounded-circle center">
-                            {% endif %}
+                          {% endif %}
                           <h5 class="mb-1" style="display:inline;vertical-align:middle;">{{ r.from_user.username }}</h5>
                       </div>
                       <div>
@@ -51,7 +51,10 @@
                       </div>
                     </div>
                   </a>
-
+                  {% empty %}
+                  <div class="alert alert-info" role="alert">
+                    Vous n'avez <strong>aucune</strong> invitation d'ami !
+                  </div>
                   {% endfor %}
                 </div>
             </div>
@@ -71,6 +74,10 @@
                     <small>{{ activity.description }}</small>
                   </a>
 
+                  {% empty %}
+                  <div class="alert alert-info" role="alert">
+                    Vous n'avez pas encore fait d'activité ! <br/><strong>Ne soyez pas timide !</strong>
+                  </div>
                   {% endfor %}
                 </div>
             </div>
@@ -93,12 +100,13 @@
                             <a href="{% url 'activity' pk=activity.id %}" class="btn btn-sm btn-primary" style="float:right;">En savoir plus</a>
                           </div>
                         </div>
+                    {% empty %}
+                    <div class="alert alert-info" role="alert">
+                      Vous n'avez pas d'activités futures ! <strong>Rejoignez en!</strong>
+                    </div>
+
                     {% endfor %}
                 </div>
-
-            </div>
-            <div class="row">
-                <!-- Personnes rencontrées -->
             </div>
         </div>
     </div>
@@ -107,7 +115,7 @@
     <hr/>
     <div class="row" id="dashboard-bottom" style="max-height:500px;margin-bottom:20px;">
         <div class="col-4" style="padding:1px;overflow-y:scroll;background:white;">
-          <h6 style="background: #34495e;color:white;padding:10px;text-align:center;font-weight:400;">Près de chez vous !</h6>
+          <h6 style="background: #34495e;color:white;padding:10px;text-align:center;font-weight:400;">Les activités disponibles</h6>
             <div id="accordion" role="tablist" aria-multiselectable="true">
               {% for activity in upcoming_activities %}
               <div class="card" style="background:white;border:0px; border-radius:0px;">
@@ -127,6 +135,10 @@
                     <a href="{% url 'activity' pk=activity.id %}" class="btn btn-sm btn-primary" style="float:right;margin-bottom:10px;">En savoir plus</a>
                   </div>
                 </div>
+              </div>
+              {% empty %}
+              <div class="alert alert-info" role="alert">
+                Il n'y a pas d'activités disponibles !<br/><strong>Vous pouvez en créer une !</strong>
               </div>
               {% endfor %}
             </div>
