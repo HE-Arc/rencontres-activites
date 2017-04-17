@@ -10,7 +10,7 @@
         {% endif %}
             <div class="card-block">
                 <h5 class="card-title">{{ user.username }}</h5>
-            <input type="checkbox" name="users" id="id_users_{{ forloop.counter0 }}" value="{{ user.0 }}" {% if user.0 in selected_ids %} checked {% endif %} />Inviter ?<br />
+            <input type="checkbox" {% if user.id in selected_ids %} checked {% endif %} name="users" id="id_users_{{ forloop.counter0 }}" value="{{ user.id }}" />Inviter ?<br />
             </div>
         </div>
 
