@@ -10,7 +10,7 @@
         <div class="col-4">
             <div class="row white_row">
                 <!-- Profil -->
-                <h6 class="row-title">Profil</h6>
+                <span class="row-title">Profil</span>
                 <div class="col-12" style="text-align: center">
                   <img src="{% if user.userprofile.image %}{{user.userprofile.image.url}}{% else %}http://www.yesuart.com/images/default-user.png{% endif %}" alt="..." style="width:12vw;height:12vw;display:block;margin: 0 auto;margin-bottom:20px;" class="rounded-circle center">
                 </div>
@@ -28,7 +28,7 @@
 
             <div class="row white_row">
                 <!-- Activités terminées -->
-                <h6 class="row-title">Demandes d'amis</h6>
+                <span class="row-title">Demandes d'amis</span>
                 <div class="list-group" style="width:100%">
 
                   {% for r in requests %}
@@ -61,7 +61,7 @@
 
             <div class="row white_row">
                 <!-- Activités terminées -->
-                <h6 class="row-title">Activités terminées</h6>
+                <span class="row-title">Activités terminées</span>
                 <div class="list-group" style="width:100%">
 
                   {% for activity in activities_done %}
@@ -85,7 +85,7 @@
         <div class="col-8" style="padding-left:50px;">
             <div class="row white_row">
                 <!-- Prochaines activités -->
-                <h6 class="row-title">Vos prochaines activités</h6>
+                <span class="row-title">Vos prochaines activités</span>
                 <div class="col-12">
                     {% for activity in next_activities %}
                         <div class="card mb-3 border-0">
@@ -120,7 +120,7 @@
     <hr/>
     <div class="row" id="dashboard-bottom" style="max-height:500px;margin-bottom:20px;">
         <div class="col-4" style="padding:1px;overflow-y:scroll;background:white;">
-          <h6 class="row-title">Les activités disponibles</h6>
+          <span class="row-title">Les activités disponibles</span>
             <div id="accordion" role="tablist" aria-multiselectable="true">
               {% for activity in upcoming_activities %}
               <div class="card" style="background:white;border:0px; border-radius:0px;">

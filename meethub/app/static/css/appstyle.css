@@ -101,6 +101,8 @@ a:hover{
   text-align:center;
   width:100%;
   font-weight:400;
+  display:block;
+  margin-bottom:5px;
 }
 footer-site{
   width:100%;

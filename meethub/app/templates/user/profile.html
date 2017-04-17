@@ -10,7 +10,7 @@
         <div class="col-12">
             <div class="row white_row">
                 <!-- Profil -->
-                <h6 class="row-title">Profil</h6>
+                <span class="row-title">Profil</span>
                 <div class="col-4">
                 <div class="row">
                   <div class="col-12">
@@ -64,7 +64,7 @@
 
             <div class="row white_row">
                 <!-- Liste des amis -->
-                <h6 class="row-title">Amis</h6>
+                <span class="row-title">Amis</span>
                 <div class="list-group" style="width:100%">
                   <div class="row">
                     {% for friend in view.friends %}
@@ -90,7 +90,7 @@
 
             <div class="row white_row">
                 <!-- Activités prochaines -->
-                <h6 class="row-title">Prochaines activités</h6>
+                <span class="row-title">Prochaines activités</span>
                 <div class="list-group" style="width:100%">
                   <div class="row">
                   {% for activity in view.next_activities %}
@@ -115,7 +115,7 @@
           </div>
             <div class="row white_row">
                 <!-- Activités terminées -->
-                <h6 class="row-title">Activités terminées</h6>
+                <span class="row-title">Activités terminées</span>
                 <div class="list-group" style="width:100%">
                   <div class="row">
                   {% for activity in view.activities_done %}
@@ -139,7 +139,7 @@
 
             <div class="row white_row">
                 <!-- Activités terminées -->
-                <h6 class="row-title">Administrateur</h6>
+                <span class="row-title">Administrateur</span>
                 <div class="list-group" style="width:100%">
                   <div class="row">
                   {% for activity in view.activities_admin %}
