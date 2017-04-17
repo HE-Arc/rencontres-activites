@@ -107,7 +107,6 @@ def matchmaking(request, lat=None, long=None):
 class ActivityFormViewCreate(LoginRequiredMixin, CreateView):
     template_name = 'activity/create.html'
     form_class = ActivityForm
-    success_url = '/'
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
@@ -118,22 +117,25 @@ class ActivityFormViewCreate(LoginRequiredMixin, CreateView):
         form.instance.admin = self.request.user
         return super(ActivityFormViewCreate, self).form_valid(form)
 
+    def get_success_url(self):
+        return reverse('activity',args=(self.object.id,))
+
 
 class ActivityFormViewUpdate(LoginRequiredMixin, UpdateView):
     template_name = 'activity/create.html'
     form_class = ActivityForm
-    success_url = '/'
     model = ActivityModel
 
     def dispatch(self, request, *args, **kwargs):
-        pk = kwargs.get('pk')
-        user = request.user
-
-        try:
-            Activity.objects.get(pk=pk, admin=user)
+        activity = self.get_object()
+        if activity.admin != request.user:
+            return HttpResponseForbidden("Vous n'avez pas le droit de modifier cette activité !")
+        else:
             return super(ActivityFormViewUpdate, self).dispatch(request, *args, **kwargs)
-        except Activity.DoesNotExist:
-            return HttpResponseForbidden()
+
+    def get_success_url(self):
+        return reverse('activity',args=(self.object.id,))
+
 
 class ActivityDetailView(LoginRequiredMixin, generic.DetailView):
     model = Activity
