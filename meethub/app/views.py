@@ -49,11 +49,11 @@ def dashboard(request):
     # Get the informations of the logged user
 
     # Get the three latest activities done by the user
-    activities_done_by_the_user = u.participants.filter(date__lte=today).order_by('-date')[:3]
+    activities_done_by_the_user = u.participants.filter(date_time__lte=today).order_by('-date_time')[:3]
     # Get the three next activities of the user
-    next_activities_of_the_user = u.participants.filter(date__gte=today).order_by('date')[:3]
+    next_activities_of_the_user = u.participants.filter(date_time__gte=today).order_by('date_time')[:3]
     # Get the first 10 upcoming activities.
-    upcoming_activities = Activity.objects.filter(date__gte=today).order_by('date')[:10]
+    upcoming_activities = Activity.objects.filter(date_time__gte=today).order_by('date_time')[:10]
 
     # Get the friend's requests for the authenticated user
     friendshipsRequests = FriendshipRequest.objects.filter(to_user=u).all()
@@ -88,7 +88,7 @@ def matchmaking(request, lat=None, long=None):
         # Gets activities near the users with open places
         activities = get_activities_near(lat, long) \
             .filter(tags__activity__tags__in=tags) \
-            .filter(date__gte=datetime.now().date()) \
+            .filter(date_time__gte=datetime.now().date()) \
             .annotate(users_count=Count("users")) \
             .filter(users_count__lt=F("max_participants"))
 
@@ -190,10 +190,10 @@ class UserProfileDetailView(LoginRequiredMixin, generic.DetailView):
         return Friend.objects.friends(self.object)
 
     def activities_done(self):
-        return self.object.participants.filter(date__lte=self.today).order_by('-date')
+        return self.object.participants.filter(date_time__lte=self.today).order_by('-date_time')
 
     def next_activities(self):
-        return self.object.participants.filter(date__gte=self.today).order_by('date')
+        return self.object.participants.filter(date_time__gte=self.today).order_by('date_time')
 
     def age(self):
         return self.today.year - self.object.userprofile.birthdate.year - ((self.today.month, self.today.day) < (

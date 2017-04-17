@@ -12,8 +12,11 @@ class ChooseTagsForm(forms.Form):
 
 
 class ActivityForm(forms.ModelForm):
+    date_time = forms.SplitDateTimeField(input_time_formats=['%H:%M'], input_date_formats=['%d/%m/%Y'])
     def __init__(self, *args, **kwargs):
         super(ActivityForm, self).__init__(*args, **kwargs)
+        self.fields['date_time'].widget.widgets[0].attrs.update({'class' : 'datepicker', 'placeholder' : 'Date'}) #assign the class date to the datefield
+        self.fields['date_time'].widget.widgets[1].attrs.update({'class' : 'clockpicker', 'placeholder': 'Heure'})
         self.fields['users'].required = False
 
     class Meta:
@@ -21,8 +24,7 @@ class ActivityForm(forms.ModelForm):
         fields = (
             'title',
             'description',
-            'date',
-            'time',
+            'date_time',
             'position',
             'min_participants',
             'max_participants',
@@ -33,8 +35,6 @@ class ActivityForm(forms.ModelForm):
         widgets = {
             "users": UserCarouselMultiSelectWidget(),
             "position": GooglePointFieldWidget,
-            'date': Html5Date,
-            "time": Html5Time
         }
 
 class UserForm(forms.ModelForm):

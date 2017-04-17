@@ -86,3 +86,6 @@ a:hover{
     background-color: #fff;
     border-color: #ccc;
 }
+.datepicker{
+  padding: .5rem .75rem;
+}

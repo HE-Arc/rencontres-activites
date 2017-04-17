@@ -38,8 +38,8 @@
                             <div class="row">
                                 <div class="col-sm-6">
                                     <ul class="list-group list-group-flush">
-                                        <li class="list-group-item">{{ activity.date }}</li>
-                                        <li class="list-group-item">{{ activity.time }}</li>
+                                        <li class="list-group-item">{{ activity.date_time.date }}</li>
+                                        <li class="list-group-item">{{ activity.date_time.time }}</li>
                                         <li class="list-group-item" id="location-name">{{ coords.street_address|default_if_none:"-"  }}
                                                                     ,{{ coords.city|default_if_none:"-"  }}
                                                                     , {{ coords.country|default_if_none:"-" }}
