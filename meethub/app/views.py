@@ -125,6 +125,11 @@ class ActivityFormViewUpdate(LoginRequiredMixin, UpdateView):
     success_url = '/'
     model = ActivityModel
 
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields['users'].widget.choices = Friend.objects.friends(self.request.user)
+        return form
+
 
 class ActivityDetailView(LoginRequiredMixin, generic.DetailView):
     model = Activity
