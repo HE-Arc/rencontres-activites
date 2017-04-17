@@ -34,7 +34,7 @@ from .models import Activity as ActivityModel
 from secret import *
 from friendship.models import Friend, Follow
 from friendship.models import FriendshipRequest
-
+from django.http import HttpResponseForbidden
 
 def index(request):
     return render(request, 'pages/index.html')
@@ -125,6 +125,15 @@ class ActivityFormViewUpdate(LoginRequiredMixin, UpdateView):
     success_url = '/'
     model = ActivityModel
 
+    def dispatch(self, request, *args, **kwargs):
+        pk = kwargs.get('pk')
+        user = request.user
+
+        try:
+            Activity.objects.get(pk=pk, admin=user)
+            return super(ActivityFormViewUpdate, self).dispatch(request, *args, **kwargs)
+        except Activity.DoesNotExist:
+            return HttpResponseForbidden()
 
 class ActivityDetailView(LoginRequiredMixin, generic.DetailView):
     model = Activity
