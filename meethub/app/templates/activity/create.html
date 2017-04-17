@@ -21,6 +21,16 @@
         {% endbuttons %}
 
     </form>
-
+<script>
+$('.datepicker').datepicker({
+    format: 'dd/mm/yyyy',
+    startDate: '+0d'
+});
+</script>
+<script type="text/javascript">
+$('.clockpicker').clockpicker({
+  donetext: 'Confirmer'
+});
+</script>
   </div>
 {% endblock %}

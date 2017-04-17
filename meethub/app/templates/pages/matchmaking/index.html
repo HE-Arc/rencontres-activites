@@ -8,21 +8,18 @@
     {% load bootstrap4 %}
     <div style="padding: 5px;">
         <div class="row">
-            <div class="col">
-                <div class="card card-inverse card-info mb-3 text-center">
-                  <div class="card-block">
-                    <blockquote class="card-blockquote">
-                      <p>You're in matchmaking mode, you can see open activities near you, and admins can invite you !</p>
-                    </blockquote>
-                  </div>
-                </div>
+            <div class="col-10 offset-1">
+              <div class="alert alert-info" role="alert">
+                <h4 class="alert-heading">C'est tout bon !</h4>
+                <p>You're in matchmaking mode, you can see open activities near you, and admins can invite you ! </p>
+              </div>
             </div>
         </div>
         <div class="row">
             <div class="col-2">
                 <div class="card">
-                  <div class="card-header">
-                    Choose your tags
+                  <div class="card-header row-title">
+                    Nouvelle recherche
                   </div>
                   <div class="card-block">
                     <form method="GET" >
@@ -40,7 +37,7 @@
 
                 <br>
                 <div class="card">
-                  <div class="card-header">
+                  <div class="card-header row-title">
                     Invitations to activities
                   </div>
                   <div class="card-block">
@@ -70,7 +67,12 @@
                         {% endif %}
                     </h4>
                     <p class="card-text">{{ activity.description }}</p>
-                    <a href="{% url "activity" pk=activity.id %}" class="btn btn-primary">See details</a>
+                    <div class="d-flex flex-wrap">
+                        {% for tag in activity.tags.all %}
+                            <span class="badge badge-pill badge-primary mr-2 mb-2">{{ tag.name }}</span>
+                        {% endfor %}
+                    </div>
+                    <a href="{% url "activity" pk=activity.id %}" class="btn btn-primary" style="float:right;margin-bottom:10px;">En savoir plus</a>
                   </div>
                 </div>
             {%  endfor %}
@@ -78,7 +80,7 @@
 
             <div class="col-6">
                 <div class="card">
-                  <div class="card-header">
+                  <div class="card-header row-title">
                     All activities in your area
                   </div>
                   <div class="card-block" style="padding: 0px">

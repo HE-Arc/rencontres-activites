@@ -21,6 +21,13 @@
                             <li>
                                 <a href="{% url 'login' %}" class="btn btn-default btn-lg">Connexion</a>
                             </li>
+                            {% else %}
+                            <li>
+                                <a href="{% url 'dashboard' %}" class="btn btn-default btn-lg">Dashboard</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'profile' pk=user.id %}" class="btn btn-default btn-lg">Profil</a>
+                            </li>
                             {% endif %}
                         </ul>
                     </div>
@@ -36,7 +43,7 @@
 
         <div class="container">
             <div class="row">
-                <div class="col-lg-8 col-sm-8 offset-sm-2 offset-lg-2">
+                <div class="col-lg-8 col-sm-12 offset-lg-2">
                     <hr class="section-heading-spacer">
                     <div class="clearfix"></div>
                     <h2 class="section-heading">Des activités qui vous plaisent: <br>Avec de nouvelles personnes !</h2>

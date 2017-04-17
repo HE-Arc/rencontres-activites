@@ -25,7 +25,7 @@ def get_waiting_users(user_to_recommend, tags):
     :return: a collection of users
     """
 
-    users = WaitingUser.objects.filter(tag__in=tags, started_at__gte=datetime.now() - timedelta(minutes=15)).values('user').distinct()
+    users = WaitingUser.objects.filter(tag__in=tags, started_at__gte=datetime.now() - timedelta(minutes=15)).distinct('user')
 
     #TODO: filter by distance of user
 
@@ -36,8 +36,7 @@ class Activity(models.Model):
     title = models.CharField(max_length=200)
     description = models.CharField(max_length=500)
     position = gmodels.PointField(null=True)
-    date = models.DateField(null=True)
-    time = models.TimeField(null=True)
+    date_time = models.DateTimeField(null=True)
     min_participants = models.IntegerField()
     max_participants = models.IntegerField()
     admin = models.ForeignKey(User, related_name="admin")

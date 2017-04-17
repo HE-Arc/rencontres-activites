@@ -9,32 +9,22 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.db import transaction
-from django.db.models import Count
-from django.db.models import F
-from django.http import HttpResponse
-from django.http import HttpResponseRedirect
-from django.shortcuts import redirect, get_object_or_404
+from django.db.models import Count, F
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
+from django.shortcuts import redirect, get_object_or_404, render
 
 from django.core import serializers
 from django.forms import forms
-
-from django.shortcuts import render
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views import generic
-from django.views.generic import CreateView
-from django.views.generic import UpdateView
+from django.views.generic import CreateView, UpdateView
 from pygeocoder import Geocoder
 
-from secret import DISQUS_SECRET_KEY
-from .forms import ActivityForm, ChooseTagsForm
-from .forms import UserForm, ProfileForm
-from .models import Activity, get_activities_near, get_waiting_users, WaitingUser, Tag, Invitation
-from .models import Activity as ActivityModel
 from secret import *
-from friendship.models import Friend, Follow
-from friendship.models import FriendshipRequest
-
+from .forms import ActivityForm, ChooseTagsForm, UserForm, ProfileForm
+from .models import Activity, get_activities_near, get_waiting_users, WaitingUser, Tag, Invitation
+from friendship.models import Friend, Follow, FriendshipRequest
 
 def index(request):
     return render(request, 'pages/index.html')
@@ -49,11 +39,11 @@ def dashboard(request):
     # Get the informations of the logged user
 
     # Get the three latest activities done by the user
-    activities_done_by_the_user = u.participants.filter(date__lte=today).order_by('-date')[:3]
+    activities_done_by_the_user = u.participants.filter(date_time__lte=today).order_by('-date_time')[:3]
     # Get the three next activities of the user
-    next_activities_of_the_user = u.participants.filter(date__gte=today).order_by('date')[:3]
+    next_activities_of_the_user = u.participants.filter(date_time__gte=today).order_by('date_time')[:3]
     # Get the first 10 upcoming activities.
-    upcoming_activities = Activity.objects.filter(date__gte=today).order_by('date')[:10]
+    upcoming_activities = Activity.objects.filter(date_time__gte=today).order_by('date_time')
 
     # Get the friend's requests for the authenticated user
     friendshipsRequests = FriendshipRequest.objects.filter(to_user=u).all()
@@ -65,7 +55,7 @@ def dashboard(request):
 
     context['requests'] = friendshipsRequests
 
-    context['api_key_map'] = "AIzaSyD48NmCV_kXSHmaGQSdEGojD7vkcRcNqME"
+    context['api_key_map'] = GEOPOSITION_GOOGLE_MAPS_API_KEY
 
     activities = Activity.objects.all()
     context['activities'] = activities
@@ -88,7 +78,7 @@ def matchmaking(request, lat=None, long=None):
         # Gets activities near the users with open places
         activities = get_activities_near(lat, long) \
             .filter(tags__activity__tags__in=tags) \
-            .filter(date__gte=datetime.now().date()) \
+            .filter(date_time__gte=datetime.now().date()) \
             .annotate(users_count=Count("users")) \
             .filter(users_count__lt=F("max_participants"))
 
@@ -107,7 +97,6 @@ def matchmaking(request, lat=None, long=None):
 class ActivityFormViewCreate(LoginRequiredMixin, CreateView):
     template_name = 'activity/create.html'
     form_class = ActivityForm
-    success_url = '/'
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
@@ -118,12 +107,24 @@ class ActivityFormViewCreate(LoginRequiredMixin, CreateView):
         form.instance.admin = self.request.user
         return super(ActivityFormViewCreate, self).form_valid(form)
 
+    def get_success_url(self):
+        return reverse('activity',args=(self.object.id,))
+
 
 class ActivityFormViewUpdate(LoginRequiredMixin, UpdateView):
     template_name = 'activity/create.html'
     form_class = ActivityForm
-    success_url = '/'
-    model = ActivityModel
+    model = Activity
+
+    def dispatch(self, request, *args, **kwargs):
+        activity = self.get_object()
+        if activity.admin != request.user:
+            return HttpResponseForbidden("Vous n'avez pas le droit de modifier cette activité !")
+        else:
+            return super(ActivityFormViewUpdate, self).dispatch(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse('activity',args=(self.object.id,))
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
@@ -152,8 +153,11 @@ class ActivityDetailView(LoginRequiredMixin, generic.DetailView):
         signature_msg = message.decode('utf-8') + " " + str(timestamp)
         signature = hmac.new(bytes(DISQUS_SECRET_KEY, 'utf-8'), bytes(signature_msg, 'utf-8'), 'sha1')
         context['disqus_auth'] = message.decode("utf-8") + ' ' + signature.hexdigest() + ' ' + str(timestamp)
+        # Waiting list
+        context['waiting_list'] = get_waiting_users(self.request.user, context['activity'].tags.all())
 
         return context
+
 
     def post(self, request, pk):
         activity = Activity.objects.get(pk=(int(pk)))
@@ -177,16 +181,19 @@ class UserProfileDetailView(LoginRequiredMixin, generic.DetailView):
 
     def isARequestPending(self):
         return FriendshipRequest.objects.select_related('from_user', 'to_user').filter(to_user=self.object,
-                                                                                       from_user=self.request.user).all().count()
+                                                                               from_user=self.request.user).all().count()
 
     def friends(self):
         return Friend.objects.friends(self.object)
 
     def activities_done(self):
-        return self.object.participants.filter(date__lte=self.today).order_by('-date')
+        return self.object.participants.filter(date_time__lte=self.today).order_by('-date_time')
 
     def next_activities(self):
-        return self.object.participants.filter(date__gte=self.today).order_by('date')
+        return self.object.participants.filter(date_time__gte=self.today).order_by('date_time')
+
+    def activities_admin(self):
+        return Activity.objects.filter(admin=self.object)
 
     def age(self):
         return self.today.year - self.object.userprofile.birthdate.year - ((self.today.month, self.today.day) < (
