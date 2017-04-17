@@ -9,32 +9,22 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.db import transaction
-from django.db.models import Count
-from django.db.models import F
-from django.http import HttpResponse
-from django.http import HttpResponseRedirect
-from django.shortcuts import redirect, get_object_or_404
+from django.db.models import Count, F
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
+from django.shortcuts import redirect, get_object_or_404, render
 
 from django.core import serializers
 from django.forms import forms
-
-from django.shortcuts import render
 from django.urls import reverse
 from django.utils.translation import gettext as _
 from django.views import generic
-from django.views.generic import CreateView
-from django.views.generic import UpdateView
+from django.views.generic import CreateView, UpdateView
 from pygeocoder import Geocoder
 
-from secret import DISQUS_SECRET_KEY
-from .forms import ActivityForm, ChooseTagsForm
-from .forms import UserForm, ProfileForm
-from .models import Activity, get_activities_near, get_waiting_users, WaitingUser, Tag, Invitation
-from .models import Activity as ActivityModel
 from secret import *
-from friendship.models import Friend, Follow
-from friendship.models import FriendshipRequest
-from django.http import HttpResponseForbidden
+from .forms import ActivityForm, ChooseTagsForm, UserForm, ProfileForm
+from .models import Activity, get_activities_near, get_waiting_users, WaitingUser, Tag, Invitation
+from friendship.models import Friend, Follow, FriendshipRequest
 
 def index(request):
     return render(request, 'pages/index.html')
@@ -124,7 +114,7 @@ class ActivityFormViewCreate(LoginRequiredMixin, CreateView):
 class ActivityFormViewUpdate(LoginRequiredMixin, UpdateView):
     template_name = 'activity/create.html'
     form_class = ActivityForm
-    model = ActivityModel
+    model = Activity
 
     def dispatch(self, request, *args, **kwargs):
         activity = self.get_object()
@@ -186,7 +176,7 @@ class UserProfileDetailView(LoginRequiredMixin, generic.DetailView):
 
     def isARequestPending(self):
         return FriendshipRequest.objects.select_related('from_user', 'to_user').filter(to_user=self.object,
-                                                                                       from_user=self.request.user).all().count()
+                                                                               from_user=self.request.user).all().count()
 
     def friends(self):
         return Friend.objects.friends(self.object)
@@ -196,6 +186,9 @@ class UserProfileDetailView(LoginRequiredMixin, generic.DetailView):
 
     def next_activities(self):
         return self.object.participants.filter(date_time__gte=self.today).order_by('date_time')
+
+    def activities_admin(self):
+        return Activity.objects.filter(admin=self.object)
 
     def age(self):
         return self.today.year - self.object.userprofile.birthdate.year - ((self.today.month, self.today.day) < (
