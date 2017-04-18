@@ -14,5 +14,12 @@
       {% bootstrap_form profile_form %}
       <button type="submit">Save changes</button>
     </form>
+
+      <script>
+      $('.datepicker').datepicker({
+          format: 'dd/mm/yyyy',
+          endDate: '0d'
+      });
+      </script>
   </div>
 {% endblock %}

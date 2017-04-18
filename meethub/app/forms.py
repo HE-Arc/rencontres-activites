@@ -15,7 +15,7 @@ class ActivityForm(forms.ModelForm):
     date_time = forms.SplitDateTimeField(input_time_formats=['%H:%M'], input_date_formats=['%d/%m/%Y'])
     def __init__(self, *args, **kwargs):
         super(ActivityForm, self).__init__(*args, **kwargs)
-        self.fields['date_time'].widget.widgets[0].attrs.update({'class' : 'datepicker', 'placeholder' : 'Date'}) #assign the class date to the datefield
+        self.fields['date_time'].widget.widgets[0].attrs.update({'class' : 'datepicker', 'placeholder' : 'Date', 'style' : 'margin-bottom:10px;'}) #assign the class date to the datefield
         self.fields['date_time'].widget.widgets[1].attrs.update({'class' : 'clockpicker', 'placeholder': 'Heure'})
         self.fields['users'].required = False
 
@@ -44,6 +44,13 @@ class UserForm(forms.ModelForm):
 
 
 class ProfileForm(forms.ModelForm):
+    birthdate = forms.DateField(input_formats=['%d/%m/%Y'])
+
+    def __init__(self, *args, **kwargs):
+        super(ProfileForm, self).__init__(*args, **kwargs)
+        self.fields['birthdate'].widget.attrs.update({'class' : 'datepicker', 'placeholder' : 'Date d\'anniversaire'}) #assign the class date to the datefield
+
+
     class Meta:
         model = UserProfile
         fields = ('bio', 'image', 'birthdate')
