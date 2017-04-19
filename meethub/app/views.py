@@ -128,7 +128,7 @@ class ActivityFormViewUpdate(LoginRequiredMixin, UpdateView):
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
-        form.fields['users'].widget.choices = Friend.objects.friends(self.request.user)
+        form.fields['users'].widget.choices = form.instance.users.all()
         return form
 
 
