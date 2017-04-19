@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.functional import lazy
 from mapwidgets.widgets import GooglePointFieldWidget
 
 from .models import Activity, User, UserProfile, Tag
@@ -6,9 +7,12 @@ from .models import Activity
 from .widgets import UserCarouselMultiSelectWidget, Html5Date, Html5Time
 
 
-class ChooseTagsForm(forms.Form):
+def _all_the_tags():
+    return [(tag.name, tag.name) for tag in Tag.objects.all()]
 
-    tags = forms.MultipleChoiceField(choices=[(tag.name, tag.name) for tag in Tag.objects.all()])
+
+class ChooseTagsForm(forms.Form):
+    tags = forms.MultipleChoiceField(choices=lazy(_all_the_tags))
 
 
 class ActivityForm(forms.ModelForm):

@@ -8,6 +8,7 @@ from django.contrib.gis.db import models as gmodels
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.gis.geos import Point
+from django.utils import timezone
 
 
 def get_activities_near(lat, long):
@@ -82,6 +83,6 @@ def save_user_profile(sender, instance, **kwargs):
 
 class Invitation(models.Model):
     to_user = models.ForeignKey(User, related_name="invitations")
-    create_at = models.DateTimeField(default=datetime.now())
+    create_at = models.DateTimeField(default=timezone.now)
     expires_in = models.DateTimeField(null=True)
     event = models.ForeignKey(Activity, related_name="invitations")

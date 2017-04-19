@@ -1,4 +1,3 @@
-import simplejson as simplejson
 from django.core import validators
 from django.forms import *
 from django.shortcuts import render
