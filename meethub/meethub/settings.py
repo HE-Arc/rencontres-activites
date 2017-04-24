@@ -17,12 +17,12 @@ from secret import *
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '5*8z1!&77k^%$56)6+#=j#ibjp!*ix*ftv=dkp4@iw$*5kiw(8'
+SECRET_KEY = os.environ.get(
+    'SECRET_KEY', '5*8z1!&77k^%$56)6+#=j#ibjp!*ix*ftv=dkp4@iw$*5kiw(8')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'geoposition',
     'bootstrap4',
     'django.contrib.sites',
     'django.contrib.gis',
@@ -80,17 +79,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'meethub.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 DATABASES = {
     'default': {
         'ENGINE': 'django.contrib.gis.db.backends.postgis',
-        'NAME': 'meethub',
-        'USER': 'postgres',
-        'PASSWORD': '1234',
-        'HOST': '127.0.0.1',
-        'PORT': '5432',
+        'NAME': os.environ.get('GROUPNAME', 'django'),
+        'USER': os.environ.get('GROUPNAME', 'django'),
+        'PASSWORD': os.environ.get('PASSWORD', 'django'),
+        'HOST': os.environ.get('POSTGRES_HOST', '127.0.0.1'),
+        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
     }
 }
 
